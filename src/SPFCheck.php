@@ -205,7 +205,7 @@ class SPFCheck
 
             case self::MECHANISM_INCLUDE:
                 $includeResult = $this->isIPAllowed($ipAddress, $operand);
-                if ($includeResult != self::RESULT_NONE) {
+                if ($includeResult == self::RESULT_PASS) {
                     return $includeResult;
                 }
                 break;
