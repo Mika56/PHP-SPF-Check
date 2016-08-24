@@ -8,6 +8,7 @@ namespace Mika56\SPFCheck;
 
 
 use Mika56\SPFCheck\Exception\DNSLookupException;
+use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
 class DNSRecordGetterFixture implements DNSRecordGetterInterface
 {
@@ -41,6 +42,7 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
         'mail.testmx.com'  => ['192.168.0.1'],
         'mail2.testmx.com' => ['172.16.0.1'],
         'testptr.com'      => ['127.0.0.1'],
+        'otherptr.com'     => ['8.8.8.8'],
     ];
 
     protected $mxRecords = [ // MX can be a domain name or an IP address (even though it is not recommended)
@@ -58,22 +60,22 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
     {
         if (array_key_exists($domain, $this->spfRecords)) {
             if ($this->spfRecords[$domain] == '') {
-                return false;
+                return array();
             }
 
-            return $this->spfRecords[$domain];
+            return array($this->spfRecords[$domain]);
         }
 
         throw new DNSLookupException;
     }
 
-    public function resolveA($domain)
+    public function resolveA($domain, $ip4only = false)
     {
         if (array_key_exists($domain, $this->aRecords)) {
             return $this->aRecords[$domain];
         }
 
-        return false;
+        return array();
     }
 
     public function resolveMx($domain)
@@ -82,7 +84,7 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
             return $this->mxRecords[$domain];
         }
 
-        return false;
+        return array();
     }
 
     public function resolvePtr($ipAddress)
@@ -91,7 +93,7 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
             return $this->ptrRecords[$ipAddress];
         }
 
-        return false;
+        return array();
     }
 
     public function exists($domain)

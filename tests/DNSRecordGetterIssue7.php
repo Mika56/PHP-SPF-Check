@@ -18,10 +18,10 @@ class DNSRecordGetterIssue7 implements DNSRecordGetterInterface
 
     public function getSPFRecordForDomain($domain)
     {
-        return false;
+        return array();
     }
 
-    public function resolveA($domain)
+    public function resolveA($domain, $ip4only = false)
     {
     }
 

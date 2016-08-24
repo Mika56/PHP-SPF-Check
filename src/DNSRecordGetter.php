@@ -16,7 +16,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
     /**
      * @param $domain string The domain to get SPF record
-     * @return string|false The SPF record, or false if there is no SPF record
+     * @return string[] The SPF record(s)
      * @throws DNSLookupException
      */
     public function getSPFRecordForDomain($domain)
@@ -26,21 +26,23 @@ class DNSRecordGetter implements DNSRecordGetterInterface
             throw new DNSLookupException;
         }
 
+        $spfRecords = array();
         foreach ($records as $record) {
             if (array_key_exists('txt', $record)) {
-                $txt = $record['txt'];
-                if (stripos($txt, 'v=spf1') === 0) {
-                    return $txt;
+                $txt = strtolower($record['txt']);
+                // An SPF record can be empty (no mechanism)
+                if ($record == 'v=spf1' || stripos($txt, 'v=spf1 ') === 0) {
+                    $spfRecords[] = $txt;
                 }
             }
         }
 
-        return false;
+        return $spfRecords;
     }
 
-    public function resolveA($domain)
+    public function resolveA($domain, $ip4only = false)
     {
-        $records = dns_get_record($domain, DNS_A | DNS_AAAA);
+        $records = dns_get_record($domain, $ip4only ? DNS_A : (DNS_A | DNS_AAAA));
         if (false === $records) {
             throw new DNSLookupException;
         }
@@ -78,13 +80,26 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
     public function resolvePtr($ipAddress)
     {
-        // PHP does not seem to be able to get multiple PTR?
-        return [gethostbyaddr($ipAddress)];
+        if (stripos($ipAddress, '.') !== false) {
+            // IPv4
+            $revIp = implode('.', array_reverse(explode('.', $ipAddress))).'.in-addr.arpa';
+        } else {
+            $literal = implode(':', array_map(function ($b) {
+                return sprintf('%04x', $b);
+            }, unpack('n*', inet_pton($ipAddress))));
+            $revIp   = strtolower(implode('.', array_reverse(str_split(str_replace(':', '', $literal))))).'.ip6.arpa';
+        }
+
+        $revs = array_map(function ($e) {
+            return $e['target'];
+        }, dns_get_record($revIp, DNS_PTR));
+
+        return array_slice($revs, 0, 10);
     }
 
     public function exists($domain)
     {
-        return checkdnsrr($domain, 'A');
+        return count($this->resolveA($domain, true)) > 0;
     }
 
     public function resetRequestCount()
@@ -94,7 +109,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
     public function countRequest()
     {
-        if (++$this->requestCount == 10) {
+        if (++$this->requestCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }

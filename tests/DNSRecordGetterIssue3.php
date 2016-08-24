@@ -25,13 +25,13 @@ class DNSRecordGetterIssue3 implements DNSRecordGetterInterface
                 return false;
             }
 
-            return $this->spfRecords[$domain];
+            return array($this->spfRecords[$domain]);
         }
 
         throw new DNSLookupException;
     }
 
-    public function resolveA($domain)
+    public function resolveA($domain, $ip4only = false)
     {
     }
 
