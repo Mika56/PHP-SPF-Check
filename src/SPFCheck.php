@@ -361,8 +361,11 @@ class SPFCheck
                         if (empty($domain)) {
                             return false;
                         } else {
+                            if (preg_match('/^[+-?~](all|a|mx|ptr|ip4|ip6|exists):?.*$/', $domain)) {
+                                return false;
+                            }
                             if (version_compare(PHP_VERSION, '7', '>=')) {
-                                if (!filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                                if (!filter_var($domain, FILTER_VALIDATE_DOMAIN)) {
                                     return false;
                                 }
                             } else {
