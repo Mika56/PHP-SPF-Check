@@ -321,12 +321,9 @@ class SPFCheck
                 // If a SPF record contains multiple spaces between parts, this should not be considered as an unknown mechanism
                 break;
             default:
-                if (stripos($condition, '=') !== false) {
-                    // If this is a modifier (and not a mechanism), any string is allowed
-                    return false;
-                }
-
-                return self::RESULT_PERMERROR;
+                // This can't be a mechanism as we checked before if SPF syntax was correct (and mechanisms valid)
+                // We are certain this is a modifier. Any string is allowed as a modifier, but that doesn't make it match
+                return false;
                 break;
         }
 
@@ -364,6 +361,7 @@ class SPFCheck
                             if (preg_match('/^[+-?~](all|a|mx|ptr|ip4|ip6|exists):?.*$/', $domain)) {
                                 return false;
                             }
+                            // @codeCoverageIgnoreStart
                             if (version_compare(PHP_VERSION, '7', '>=')) {
                                 if (!filter_var($domain, FILTER_VALIDATE_DOMAIN)) {
                                     return false;
@@ -377,6 +375,7 @@ class SPFCheck
                                     return false;
                                 }
                             }
+                            // @codeCoverageIgnoreEnd
                         }
                     }
                 }

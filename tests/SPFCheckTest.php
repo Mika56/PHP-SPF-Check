@@ -87,6 +87,9 @@ class SPFCheckTest extends \PHPUnit_Framework_TestCase
 
             /* Invalid (permerror) */
             [SPFCheck::RESULT_PERMERROR, 'testinvalid.com', '8.8.8.8'],
+
+            /* No domain */
+            [SPFCheck::RESULT_NONE, '', '8.8.8.8'],
         ];
     }
 }

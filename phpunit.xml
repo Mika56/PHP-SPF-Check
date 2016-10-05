@@ -18,12 +18,20 @@
     <filter>
         <whitelist>
             <directory>src</directory>
-            <exclude>
-                <file>src/DNSRecordGetter.php</file>
-            </exclude>
         </whitelist>
     </filter>
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
     </logging>
+    <listeners>
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+            <arguments>
+                <array>
+                    <element key="dns-sensitive">
+                        <string>Mika56\SPFCheck</string>
+                    </element>
+                </array>
+            </arguments>
+        </listener>
+    </listeners>
 </phpunit>

@@ -28,10 +28,10 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
         $spfRecords = array();
         foreach ($records as $record) {
-            if (array_key_exists('txt', $record)) {
+            if ($record['type'] == 'TXT') {
                 $txt = strtolower($record['txt']);
                 // An SPF record can be empty (no mechanism)
-                if ($record == 'v=spf1' || stripos($txt, 'v=spf1 ') === 0) {
+                if ($txt == 'v=spf1' || stripos($txt, 'v=spf1 ') === 0) {
                     $spfRecords[] = $txt;
                 }
             }
@@ -99,7 +99,11 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
     public function exists($domain)
     {
-        return count($this->resolveA($domain, true)) > 0;
+        try {
+            return count($this->resolveA($domain, true)) > 0;
+        } catch (DNSLookupException $e) {
+            return false;
+        }
     }
 
     public function resetRequestCount()
