@@ -47,7 +47,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
             throw new DNSLookupException;
         }
 
-        $addresses = [];
+        $addresses = array();
 
         foreach ($records as $record) {
             if ($record['type'] === "A") {
@@ -67,7 +67,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
             throw new DNSLookupException;
         }
 
-        $addresses = [];
+        $addresses = array();
 
         foreach ($records as $record) {
             if ($record['type'] === "MX") {

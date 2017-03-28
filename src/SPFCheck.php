@@ -31,7 +31,7 @@ class SPFCheck
 
     protected static function getValidResults()
     {
-        return [self::RESULT_PASS, self::RESULT_FAIL, self::RESULT_SOFTFAIL, self::RESULT_NEUTRAL];
+        return array(self::RESULT_PASS, self::RESULT_FAIL, self::RESULT_SOFTFAIL, self::RESULT_NEUTRAL);
     }
 
     const MECHANISM_ALL = 'all';
@@ -81,7 +81,8 @@ class SPFCheck
 
         // Handle IPv4 address in IPv6 format
         if (preg_match('/^(:|0000:0000:0000:0000:0000):FFFF:/i', $ipAddress)) {
-            $ipAddress = strrev(explode(':', strrev($ipAddress), '2')[0]);
+	        $explode = explode(':', strrev($ipAddress), '2');
+	        $ipAddress = strrev($explode[0]);
         }
 
         $result = $this->doCheck($ipAddress, $domain);
@@ -239,7 +240,7 @@ class SPFCheck
                     unset($cidr);
                 }
 
-                $validIpAddresses = [];
+                $validIpAddresses = array();
                 $this->DNSRecordGetter->countRequest();
                 $mxServers = $this->DNSRecordGetter->resolveMx($domain);
                 if (count($mxServers) > 10) {
