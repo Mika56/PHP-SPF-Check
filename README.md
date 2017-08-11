@@ -1,6 +1,5 @@
 # PHP-SPF-Check
 [![Build Status](https://travis-ci.org/Mika56/PHP-SPF-Check.svg?branch=master)](https://travis-ci.org/Mika56/PHP-SPF-Check)
-[![HHVM](https://img.shields.io/hhvm/mika56/spfcheck.svg?maxAge=2592000)](http://hhvm.h4cc.de/package/mika56/spfcheck)
 [![Latest Stable Version](https://poser.pugx.org/mika56/spfcheck/v/stable)](https://packagist.org/packages/mika56/spfcheck)
 [![Total Downloads](https://poser.pugx.org/mika56/spfcheck/downloads)](https://packagist.org/packages/mika56/spfcheck)
 [![License](https://poser.pugx.org/mika56/spfcheck/license)](https://packagist.org/packages/mika56/spfcheck)
