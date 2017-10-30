@@ -138,7 +138,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
 
         $revs = array_map(function ($e) {
             return $e['target'];
-        }, dns_get_record($revIp, "PTR"));
+        }, $this->dns_get_record($revIp, "PTR"));
 
         return array_slice($revs, 0, 10);
     }
@@ -169,7 +169,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
 
         $response = array();
 
-        $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, true, false, false);
+        $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, $this->udp, false, false);
 
         $result = $dnsquery->query($question, $type);
 
