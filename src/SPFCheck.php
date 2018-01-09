@@ -249,6 +249,8 @@ class SPFCheck
                     if (false !== filter_var($mxServer, FILTER_VALIDATE_IP)) {
                         $validIpAddresses[] = $mxServer;
                     } else {
+                        $this->DNSRecordGetter->countRequest();
+
                         foreach ($this->DNSRecordGetter->resolveA($mxServer) as $mxIpAddress) {
                             $validIpAddresses[] = $mxIpAddress;
                         }
