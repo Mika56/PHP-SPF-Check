@@ -14,6 +14,8 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
 {
 
     protected $requestCount = 0;
+    protected $requestMXCount = 0;
+    protected $requestPTRCount = 0;
 
     protected $spfRecords = [
         'test.com'          => 'v=spf1 +ip4:127.0.0.0/8 +ip4:172.16.0.0/16 ip4:192.168.0.0/24 +ip6:fe80::/64 -all',
@@ -101,14 +103,37 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
         return array_key_exists($domain, $this->aRecords) && count($this->aRecords) > 0;
     }
 
+
     public function resetRequestCount()
     {
-        $this->requestCount = 0;
+        trigger_error('DNSRecordGetterInterface::resetRequestCount() is deprecated. Please use resetRequestCounts() instead', E_USER_DEPRECATED);
+        $this->resetRequestCounts();
     }
 
     public function countRequest()
     {
-        if (++$this->requestCount == 10) {
+        if (++$this->requestCount > 10) {
+            throw new DNSLookupLimitReachedException();
+        }
+    }
+
+    public function resetRequestCounts()
+    {
+        $this->requestCount    = 0;
+        $this->requestMXCount  = 0;
+        $this->requestPTRCount = 0;
+    }
+
+    public function countMxRequest()
+    {
+        if (++$this->requestMXCount > 10) {
+            throw new DNSLookupLimitReachedException();
+        }
+    }
+
+    public function countPtrRequest()
+    {
+        if (++$this->requestPTRCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }

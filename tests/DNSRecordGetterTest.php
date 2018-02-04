@@ -174,9 +174,71 @@ class DNSRecordGetterTest extends \PHPUnit_Framework_TestCase
         for ($i = 0; $i < 10; $i++) {
             $dnsRecordGetter->countRequest();
         }
-        $dnsRecordGetter->resetRequestCount();
+        $dnsRecordGetter->resetRequestCounts();
         for ($i = 0; $i < 10; $i++) {
             $dnsRecordGetter->countRequest();
+        }
+    }
+
+    public function testMXLookupLimitEdge()
+    {
+        $dnsRecordGetter = new DNSRecordGetter();
+        for ($i = 0; $i < 10; $i++) {
+            $dnsRecordGetter->countMxRequest();
+        }
+    }
+
+    /**
+     * @expectedException \Mika56\SPFCheck\Exception\DNSLookupLimitReachedException
+     */
+    public function testMXLookupLimitExceed()
+    {
+        $dnsRecordGetter = new DNSRecordGetter();
+        for ($i = 0; $i <= 10; $i++) {
+            $dnsRecordGetter->countMxRequest();
+        }
+    }
+
+    public function testMXLookupLimitReset()
+    {
+        $dnsRecordGetter = new DNSRecordGetter();
+        for ($i = 0; $i < 10; $i++) {
+            $dnsRecordGetter->countMxRequest();
+        }
+        $dnsRecordGetter->resetRequestCounts();
+        for ($i = 0; $i < 10; $i++) {
+            $dnsRecordGetter->countMxRequest();
+        }
+    }
+
+    public function testPTRLookupLimitEdge()
+    {
+        $dnsRecordGetter = new DNSRecordGetter();
+        for ($i = 0; $i < 10; $i++) {
+            $dnsRecordGetter->countPtrRequest();
+        }
+    }
+
+    /**
+     * @expectedException \Mika56\SPFCheck\Exception\DNSLookupLimitReachedException
+     */
+    public function testPTRLookupLimitExceed()
+    {
+        $dnsRecordGetter = new DNSRecordGetter();
+        for ($i = 0; $i <= 10; $i++) {
+            $dnsRecordGetter->countPtrRequest();
+        }
+    }
+
+    public function testPTRLookupLimitReset()
+    {
+        $dnsRecordGetter = new DNSRecordGetter();
+        for ($i = 0; $i < 10; $i++) {
+            $dnsRecordGetter->countPtrRequest();
+        }
+        $dnsRecordGetter->resetRequestCounts();
+        for ($i = 0; $i < 10; $i++) {
+            $dnsRecordGetter->countPtrRequest();
         }
     }
 

@@ -76,7 +76,7 @@ class SPFCheck
         $this->redirect = null;
         if ($resetRequestCount) {
             $this->voidLookup = 0;
-            $this->DNSRecordGetter->resetRequestCount();
+            $this->DNSRecordGetter->resetRequestCounts();
         }
 
         // Handle IPv4 address in IPv6 format
@@ -92,6 +92,12 @@ class SPFCheck
         return $result;
     }
 
+    /**
+     * @param $ipAddress
+     * @param $domain
+     * @return bool|string
+     * @throws DNSLookupException
+     */
     private function doCheck($ipAddress, $domain)
     {
         try {
@@ -141,6 +147,14 @@ class SPFCheck
         return self::RESULT_NEUTRAL;
     }
 
+    /**
+     * @param $ipAddress
+     * @param $part
+     * @param $matchingDomain
+     * @return bool
+     * @throws DNSLookupLimitReachedException
+     * @throws DNSLookupException
+     */
     protected function ipMatchesPart($ipAddress, $part, $matchingDomain)
     {
         $qualifier = substr($part, 0, 1);
@@ -242,10 +256,8 @@ class SPFCheck
                 $validIpAddresses = [];
                 $this->DNSRecordGetter->countRequest();
                 $mxServers = $this->DNSRecordGetter->resolveMx($domain);
-                if (count($mxServers) > 10) {
-                    return self::RESULT_PERMERROR;
-                }
                 foreach ($mxServers as $mxServer) {
+                    $this->DNSRecordGetter->countMxRequest();
                     if (false !== filter_var($mxServer, FILTER_VALIDATE_IP)) {
                         $validIpAddresses[] = $mxServer;
                     } else {
@@ -277,6 +289,7 @@ class SPFCheck
                 $ptrRecords                  = $this->DNSRecordGetter->resolvePtr($ipAddress);
                 $validatedSendingDomainNames = array();
                 foreach ($ptrRecords as $ptrRecord) {
+                    $this->DNSRecordGetter->countPtrRequest();
                     $ptrRecord   = strtolower($ptrRecord);
                     $ipAddresses = $this->DNSRecordGetter->resolveA($ptrRecord);
                     if (in_array($ipAddress, $ipAddresses)) {

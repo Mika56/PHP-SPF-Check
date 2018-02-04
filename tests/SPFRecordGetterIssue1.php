@@ -74,4 +74,16 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
     public function countRequest()
     {
     }
+
+    public function resetRequestCounts()
+    {
+    }
+
+    public function countMxRequest()
+    {
+    }
+
+    public function countPtrRequest()
+    {
+    }
 }

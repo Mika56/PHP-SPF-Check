@@ -16,6 +16,8 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
 {
     protected $data;
     protected $requestCount;
+    protected $requestMXCount = 0;
+    protected $requestPTRCount = 0;
 
     public function __construct($data)
     {
@@ -145,12 +147,34 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
 
     public function resetRequestCount()
     {
-        $this->requestCount = 0;
+        trigger_error('DNSRecordGetterInterface::resetRequestCount() is deprecated. Please use resetRequestCounts() instead', E_USER_DEPRECATED);
+        $this->resetRequestCounts();
     }
 
     public function countRequest()
     {
-        if (++$this->requestCount == 11) {
+        if (++$this->requestCount > 10) {
+            throw new DNSLookupLimitReachedException();
+        }
+    }
+
+    public function resetRequestCounts()
+    {
+        $this->requestCount    = 0;
+        $this->requestMXCount  = 0;
+        $this->requestPTRCount = 0;
+    }
+
+    public function countMxRequest()
+    {
+        if (++$this->requestMXCount > 10) {
+            throw new DNSLookupLimitReachedException();
+        }
+    }
+
+    public function countPtrRequest()
+    {
+        if (++$this->requestPTRCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }
