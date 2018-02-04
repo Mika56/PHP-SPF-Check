@@ -245,10 +245,19 @@ class SPFCheck
                 if (count($mxServers) > 10) {
                     return self::RESULT_PERMERROR;
                 }
+
+                $skip = true;
+
                 foreach ($mxServers as $mxServer) {
                     if (false !== filter_var($mxServer, FILTER_VALIDATE_IP)) {
                         $validIpAddresses[] = $mxServer;
                     } else {
+                        if ($skip) {
+                            $skip = false;
+                        } else {
+                            $this->DNSRecordGetter->countRequest();
+                        }
+
                         foreach ($this->DNSRecordGetter->resolveA($mxServer) as $mxIpAddress) {
                             $validIpAddresses[] = $mxIpAddress;
                         }
