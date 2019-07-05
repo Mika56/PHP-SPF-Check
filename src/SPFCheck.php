@@ -93,9 +93,9 @@ class SPFCheck
     }
 
     /**
-     * @param $ipAddress
-     * @param $domain
-     * @return bool|string
+     * @param string $ipAddress
+     * @param string $domain
+     * @return string|false
      * @throws DNSLookupException
      */
     private function doCheck($ipAddress, $domain)
@@ -148,10 +148,10 @@ class SPFCheck
     }
 
     /**
-     * @param $ipAddress
-     * @param $part
-     * @param $matchingDomain
-     * @return bool
+     * @param string $ipAddress
+     * @param string $part
+     * @param string $matchingDomain
+     * @return string|false
      * @throws DNSLookupLimitReachedException
      * @throws DNSLookupException
      */
