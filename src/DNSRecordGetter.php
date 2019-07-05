@@ -17,7 +17,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
     protected $requestPTRCount = 0;
 
     /**
-     * @param $domain string The domain to get SPF record
+     * @param string $domain The domain to get SPF record
      * @return string[] The SPF record(s)
      * @throws DNSLookupException
      */
