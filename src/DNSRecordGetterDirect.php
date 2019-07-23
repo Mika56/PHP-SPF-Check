@@ -160,12 +160,17 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         $response = array();
 
         $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, $this->udp, false, false);
-
         $result = $dnsquery->query($question, $type);
 
-        if ($dnsquery->hasError()) {
-            throw new DNSLookupException($dnsquery->getLasterror());
+        // Retry if we get an too big for UDP error
+        if ($dnsquery->hasError() && $dnsquery->getLasterror() == "Response too big for UDP, retry with TCP")  {
+            $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, false, false, false);
+            $result = $dnsquery->query($question, $type);
         }
+
+        if($dnsquery->hasError()){
+            throw new DNSLookupException($dnsquery->getLasterror());
+        } 
 
         foreach ($result as $index => $record) {
 
