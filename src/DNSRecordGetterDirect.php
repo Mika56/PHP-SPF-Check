@@ -21,6 +21,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
     protected $port = 53;
     protected $timeout = 30;
     protected $udp = true;
+    protected $tcpFallback;
 
     const DNS_A = 'A';
     const DNS_CNAME = "CNAME";
@@ -45,13 +46,15 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
      * @param int $port
      * @param int $timeout
      * @param bool $udp
+     * @param bool $tcpFallback
      */
-    public function __construct($nameserver = "8.8.8.8", $port = 53, $timeout = 30, $udp = true)
+    public function __construct($nameserver = "8.8.8.8", $port = 53, $timeout = 30, $udp = true, $tcpFallback = true)
     {
-        $this->nameserver = $nameserver;
-        $this->port       = $port;
-        $this->timeout    = $timeout;
-        $this->udp        = $udp;
+        $this->nameserver  = $nameserver;
+        $this->port        = $port;
+        $this->timeout     = $timeout;
+        $this->udp         = $udp;
+        $this->tcpFallback = $tcpFallback;
     }
 
     /**
@@ -156,21 +159,20 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
 
     public function dns_get_record($question, $type)
     {
-
         $response = array();
 
         $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, $this->udp, false, false);
-        $result = $dnsquery->query($question, $type);
+        $result   = $dnsquery->query($question, $type);
 
         // Retry if we get an too big for UDP error
-        if ($dnsquery->hasError() && $dnsquery->getLasterror() == "Response too big for UDP, retry with TCP")  {
+        if ($this->udp && $this->tcpFallback && $dnsquery->hasError() && $dnsquery->getLasterror() == "Response too big for UDP, retry with TCP") {
             $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, false, false, false);
-            $result = $dnsquery->query($question, $type);
+            $result   = $dnsquery->query($question, $type);
         }
 
-        if($dnsquery->hasError()){
+        if ($dnsquery->hasError()) {
             throw new DNSLookupException($dnsquery->getLasterror());
-        } 
+        }
 
         foreach ($result as $index => $record) {
 
