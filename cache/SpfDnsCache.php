@@ -48,8 +48,8 @@ class SpfDnsCache extends Model
         $parent = explode(".", $domainname, 2)[1] ?? $domainname;
         if (!$expiry) {
             $expiry = new \DateInterval(self::$expiry);
-            $validuntil = (new \DateTimeImmutable())->add($expiry);
         }
+        $validuntil = (new \DateTimeImmutable())->add($expiry);
         foreach ($txtrecords as $idx => $record) {
             $e = new self();
             $e->domainname = $domainname;
