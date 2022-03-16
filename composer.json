@@ -1,9 +1,9 @@
 {
-    "name": "mika56/spfcheck",
+    "name": "xrobau/spfcheck",
     "description": "Checks an IP address against a domain's SPF record",
     "type": "library",
     "require-dev": {
-        "phpunit/phpunit": "4.8.* || 7.*",
+        "phpunit/phpunit": "^9",
         "symfony/yaml": "~2.1",
         "satooshi/php-coveralls": "~1.0",
         "symfony/phpunit-bridge": "^4.2 || 5.*"
@@ -16,10 +16,14 @@
         {
             "name": "Brian Tafoya",
             "email": "btafoya@briantafoya.com"
+        },
+        {
+            "name": "Rob Thomas",
+            "email": "xrobau@gmail.com"
         }
     ],
     "require": {
-        "symfony/http-foundation": "2.8.* || ^3.0 || ^4.0 || ^5.0",
+        "symfony/http-foundation": "*",
         "php": ">=5.4",
         "purplepixie/phpdns": "^2.0"
     },

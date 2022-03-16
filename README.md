@@ -7,13 +7,15 @@
 
 Simple library to check an IP address against a domain's [SPF](http://www.openspf.org/) record
 
+This is an updated fork of `mika56/spfcheck`, with only minor changes.
+
 ## Installation
 This library is available through Composer.
-Run `composer require mika56/spfcheck` or add this to your composer.json:
+Run `composer require xrobau/spfcheck` or add this to your composer.json:
 ```json
 {
   "require": {
-    "mika56/spfcheck": "^1"
+    "xrobau/spfcheck": "^1"
   }
 }
 ```
