@@ -26,6 +26,7 @@ Create a new instance of SPFCheck. The constructor requires a DNSRecordGetterInt
 <?php
 use Mika56\SPFCheck\SPFCheck;
 use Mika56\SPFCheck\DNSRecordGetter;
+use Mika56\SPFCheck\DNSRecordGetterDirect;
 
 require('vendor/autoload.php');
 
