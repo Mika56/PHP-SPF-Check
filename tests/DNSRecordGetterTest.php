@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
 
 
+use Mika56\SPFCheck\DNSRecordGetter;
+use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\DnsMock;
 
-class DNSRecordGetterTest extends \PHPUnit_Framework_TestCase
+class DNSRecordGetterTest extends TestCase
 {
     public function testGetSPFRecordForDomain()
     {
@@ -155,11 +158,9 @@ class DNSRecordGetterTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @expectedException \Mika56\SPFCheck\Exception\DNSLookupLimitReachedException
-     */
     public function testLookupLimitExceed()
     {
+        $this->expectException(DNSLookupLimitReachedException::class);
         $dnsRecordGetter = new DNSRecordGetter();
         for ($i = 0; $i <= 10; $i++) {
             $dnsRecordGetter->countRequest();
@@ -186,11 +187,9 @@ class DNSRecordGetterTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @expectedException \Mika56\SPFCheck\Exception\DNSLookupLimitReachedException
-     */
     public function testMXLookupLimitExceed()
     {
+        $this->expectException(DNSLookupLimitReachedException::class);
         $dnsRecordGetter = new DNSRecordGetter();
         for ($i = 0; $i <= 10; $i++) {
             $dnsRecordGetter->countMxRequest();
@@ -217,11 +216,9 @@ class DNSRecordGetterTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @expectedException \Mika56\SPFCheck\Exception\DNSLookupLimitReachedException
-     */
     public function testPTRLookupLimitExceed()
     {
+        $this->expectException(DNSLookupLimitReachedException::class);
         $dnsRecordGetter = new DNSRecordGetter();
         for ($i = 0; $i <= 10; $i++) {
             $dnsRecordGetter->countPtrRequest();

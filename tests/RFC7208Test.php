@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
+
+use Mika56\SPFCheck\DNSRecordGetterInterface;
+use Mika56\SPFCheck\SPFCheck;
 
 class RFC7208Test extends OpenSPFTest
 {

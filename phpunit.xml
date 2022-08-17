@@ -1,37 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         bootstrap="tests/PHPUnit7Compat.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         beStrictAboutTestsThatDoNotTestAnything="false">
-    <testsuites>
-        <testsuite name="SPFCheck Test Suite">
-            <directory suffix=".php">./tests/</directory>
-        </testsuite>
-    </testsuites>
-
-    <filter>
-        <whitelist>
-            <directory>src</directory>
-        </whitelist>
-    </filter>
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
-            <arguments>
-                <array>
-                    <element key="dns-sensitive">
-                        <string>Mika56\SPFCheck</string>
-                    </element>
-                </array>
-            </arguments>
-        </listener>
-    </listeners>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" backupStaticAttributes="false" bootstrap="vendor/autoload.php"
+         colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false"
+         stopOnFailure="false" beStrictAboutTestsThatDoNotTestAnything="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory>src</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="SPFCheck Test Suite">
+      <directory suffix=".php">./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <logging/>
+  <listeners>
+    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+      <arguments>
+        <array>
+          <element key="dns-sensitive">
+            <string>Mika56\SPFCheck</string>
+          </element>
+        </array>
+      </arguments>
+    </listener>
+  </listeners>
 </phpunit>

@@ -3,10 +3,9 @@
     "description": "Checks an IP address against a domain's SPF record",
     "type": "library",
     "require-dev": {
-        "phpunit/phpunit": "4.8.* || 7.*",
-        "symfony/yaml": "~2.1",
-        "satooshi/php-coveralls": "~1.0",
-        "symfony/phpunit-bridge": "^4.2 || 5.*"
+        "phpunit/phpunit": "^9.5",
+        "symfony/yaml": "^4.4||^5.4||^6.0",
+        "symfony/phpunit-bridge": "^6.1"
     },
     "authors": [
         {
@@ -27,6 +26,11 @@
     "autoload": {
         "psr-4": {
             "Mika56\\SPFCheck\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mika56\\SPFCheck\\Test\\": "tests"
         }
     },
     "license": "MIT"
