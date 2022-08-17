@@ -28,13 +28,6 @@ interface DNSRecordGetterInterface
     public function exists(string $domain): bool;
 
     /**
-     * @return void
-     * @deprecated {@see resetRequestCounts}
-     * @codeCoverageIgnore
-     */
-    public function resetRequestCount(): void;
-
-    /**
      * Reset all request counters (A/AAAA, MX, PTR)
      * @return void
      */

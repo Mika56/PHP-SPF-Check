@@ -47,12 +47,6 @@ class DNSRecordGetterIssue3 implements DNSRecordGetterInterface
     {
     }
 
-    public function resetRequestCount(): void
-    {
-        trigger_error('DNSRecordGetterInterface::resetRequestCount() is deprecated. Please use resetRequestCounts() instead', E_USER_DEPRECATED);
-        $this->resetRequestCounts();
-    }
-
     public function countRequest(): void
     {
         if (++$this->requestCount > 10) {

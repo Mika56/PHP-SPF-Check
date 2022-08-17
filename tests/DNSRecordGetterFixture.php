@@ -102,13 +102,6 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
         return array_key_exists($domain, $this->aRecords) && count($this->aRecords) > 0;
     }
 
-
-    public function resetRequestCount(): void
-    {
-        trigger_error('DNSRecordGetterInterface::resetRequestCount() is deprecated. Please use resetRequestCounts() instead', E_USER_DEPRECATED);
-        $this->resetRequestCounts();
-    }
-
     public function countRequest(): void
     {
         if (++$this->requestCount > 10) {
