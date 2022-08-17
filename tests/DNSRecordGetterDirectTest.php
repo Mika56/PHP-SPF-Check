@@ -4,6 +4,7 @@
  *
  * @author    Brian Tafoya <btafoya@briantafoya.com>
  */
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -125,6 +126,6 @@ class DNSRecordGetterDirectTest extends \PHPUnit_Framework_TestCase
 
         $context = stream_context_create($opts);
 
-        return file_get_contents('http://'.$this->dnsServer.':80/'.$url, false, $context);
+        file_get_contents('http://'.$this->dnsServer.':80/'.$url, false, $context);
     }
 }

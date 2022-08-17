@@ -1,8 +1,8 @@
 <?php
+
+declare(strict_types=1);
 /**
- * DNSRecordGetterDirect
- *
- * @author    Brian Tafoya <btafoya@briantafoya.com>
+ * @author Brian Tafoya <btafoya@briantafoya.com>
  */
 
 namespace Mika56\SPFCheck;
@@ -14,14 +14,14 @@ use PurplePixie\PhpDns\DNSQuery;
 class DNSRecordGetterDirect implements DNSRecordGetterInterface
 {
 
-    protected $requestCount = 0;
-    protected $requestMXCount = 0;
-    protected $requestPTRCount = 0;
-    protected $nameserver = "8.8.8.8";
-    protected $port = 53;
-    protected $timeout = 30;
-    protected $udp = true;
-    protected $tcpFallback;
+    protected int $requestCount = 0;
+    protected int $requestMXCount = 0;
+    protected int $requestPTRCount = 0;
+    protected string $nameserver = "8.8.8.8";
+    protected int $port = 53;
+    protected int $timeout = 30;
+    protected bool $udp = true;
+    protected bool $tcpFallback;
 
     const DNS_A = 'A';
     const DNS_CNAME = "CNAME";
@@ -39,16 +39,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
     const DNS_ALL = "ALL";
     const DNS_ANY = "ANY";
 
-    /**
-     * DNSRecordGetter constructor.
-     *
-     * @param string $nameserver
-     * @param int $port
-     * @param int $timeout
-     * @param bool $udp
-     * @param bool $tcpFallback
-     */
-    public function __construct($nameserver = "8.8.8.8", $port = 53, $timeout = 30, $udp = true, $tcpFallback = true)
+    public function __construct(string $nameserver = '8.8.8.8', int $port = 53, int $timeout = 30, bool $udp = true, bool $tcpFallback = true)
     {
         $this->nameserver  = $nameserver;
         $this->port        = $port;
@@ -62,7 +53,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
      * @return string[] The SPF record(s)
      * @throws DNSLookupException
      */
-    public function getSPFRecordForDomain($domain)
+    public function getSPFRecordForDomain(string $domain): array
     {
         $records = $this->dns_get_record($domain, "TXT");
         if (false === $records) {
@@ -83,7 +74,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         return $spfRecords;
     }
 
-    public function resolveA($domain, $ip4only = false)
+    public function resolveA(string $domain, bool $ip4only = false): array
     {
         $records = $this->dns_get_record($domain, "A");
 
@@ -111,7 +102,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         return $addresses;
     }
 
-    public function resolveMx($domain)
+    public function resolveMx(string $domain): array
     {
         $records = $this->dns_get_record($domain, "MX");
         if (false === $records) {
@@ -129,7 +120,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         return $addresses;
     }
 
-    public function resolvePtr($ipAddress)
+    public function resolvePtr(string $ipAddress): array
     {
         if (stripos($ipAddress, '.') !== false) {
             // IPv4
@@ -148,7 +139,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         return $revs;
     }
 
-    public function exists($domain)
+    public function exists(string $domain): bool
     {
         try {
             return count($this->resolveA($domain, true)) > 0;
@@ -157,16 +148,16 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         }
     }
 
-    public function dns_get_record($question, $type)
+    public function dns_get_record($question, $type): array
     {
         $response = array();
 
-        $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, $this->udp, false, false);
+        $dnsquery = new DNSQuery($this->nameserver, $this->port, $this->timeout, $this->udp, false, false);
         $result   = $dnsquery->query($question, $type);
 
-        // Retry if we get an too big for UDP error
+        // Retry if we get a too big for UDP error
         if ($this->udp && $this->tcpFallback && $dnsquery->hasError() && $dnsquery->getLasterror() == "Response too big for UDP, retry with TCP") {
-            $dnsquery = new DNSQuery($this->nameserver, (int)$this->port, (int)$this->timeout, false, false, false);
+            $dnsquery = new DNSQuery($this->nameserver, $this->port, $this->timeout, false, false, false);
             $result   = $dnsquery->query($question, $type);
         }
 
@@ -174,7 +165,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
             throw new DNSLookupException($dnsquery->getLasterror());
         }
 
-        foreach ($result as $index => $record) {
+        foreach ($result as $record) {
 
             $extras = array();
 
@@ -191,7 +182,6 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
             switch ($type) {
                 default:
                     throw new \Exception("Unsupported type ".$type.".");
-                    break;
                 case "A":
                     $response[] = array(
                         "host"  => $record->getDomain(),
@@ -249,34 +239,34 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
     /**
      * @codeCoverageIgnore
      */
-    public function resetRequestCount()
+    public function resetRequestCount(): void
     {
         trigger_error('DNSRecordGetterInterface::resetRequestCount() is deprecated. Please use resetRequestCounts() instead', E_USER_DEPRECATED);
         $this->resetRequestCounts();
     }
 
-    public function countRequest()
+    public function countRequest(): void
     {
         if (++$this->requestCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }
 
-    public function resetRequestCounts()
+    public function resetRequestCounts(): void
     {
         $this->requestCount    = 0;
         $this->requestMXCount  = 0;
         $this->requestPTRCount = 0;
     }
 
-    public function countMxRequest()
+    public function countMxRequest(): void
     {
         if (++$this->requestMXCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }
 
-    public function countPtrRequest()
+    public function countPtrRequest(): void
     {
         if (++$this->requestPTRCount > 10) {
             throw new DNSLookupLimitReachedException();

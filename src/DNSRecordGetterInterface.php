@@ -1,8 +1,6 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -13,56 +11,53 @@ use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 interface DNSRecordGetterInterface
 {
     /**
-     * @param $domain
      * @return string[]
      * @throws DNSLookupException
      */
-    public function getSPFRecordForDomain($domain);
+    public function getSPFRecordForDomain(string $domain): array;
 
-    public function resolveA($domain, $ip4only = false);
+    public function resolveA(string $domain, bool $ip4only = false): array;
 
-    public function resolveMx($domain);
+    public function resolveMx(string $domain): array;
 
-    public function resolvePtr($ipAddress);
+    public function resolvePtr(string $ipAddress): array;
 
     /**
-     * @param $domain
-     * @return boolean
      * @throws DNSLookupException
      */
-    public function exists($domain);
+    public function exists(string $domain): bool;
 
     /**
      * @return void
      * @deprecated {@see resetRequestCounts}
      * @codeCoverageIgnore
      */
-    public function resetRequestCount();
+    public function resetRequestCount(): void;
 
     /**
      * Reset all request counters (A/AAAA, MX, PTR)
      * @return void
      */
-    public function resetRequestCounts();
+    public function resetRequestCounts(): void;
 
     /**
      * Count a A/AAAA request
      * @throws DNSLookupLimitReachedException
      * @return void
      */
-    public function countRequest();
+    public function countRequest(): void;
 
     /**
      * Count an MX request
      * @throws DNSLookupLimitReachedException
      * @return void
      */
-    public function countMxRequest();
+    public function countMxRequest(): void;
 
     /**
      * Count a PTR request
      * @throws DNSLookupLimitReachedException
      * @return void
      */
-    public function countPtrRequest();
+    public function countPtrRequest(): void;
 }

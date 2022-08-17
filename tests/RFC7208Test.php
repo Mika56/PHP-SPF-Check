@@ -1,8 +1,6 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -11,7 +9,7 @@ class RFC7208Test extends OpenSPFTest
     /**
      * @dataProvider RFC7208DataProvider
      */
-    public function testRFC7208($ipAddress, $domain, DNSRecordGetterInterface $dnsData, $expectedResult)
+    public function testRFC7208(string $ipAddress, string $domain, DNSRecordGetterInterface $dnsData, array $expectedResult)
     {
         $spfCheck = new SPFCheck($dnsData);
         $result   = $spfCheck->isIPAllowed($ipAddress, $domain);
@@ -25,7 +23,7 @@ class RFC7208Test extends OpenSPFTest
         );
     }
 
-    public function RFC7208DataProvider()
+    public function RFC7208DataProvider(): array
     {
         $scenarios = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'rfc7208-tests.yml');
         // Apparently there is a YML error in that file
@@ -34,12 +32,12 @@ class RFC7208Test extends OpenSPFTest
         return $this->loadTestCases($scenarios);
     }
 
-    function isScenarioAllowed($scenarioName)
+    protected function isScenarioAllowed(string $scenarioName): bool
     {
         return $scenarioName != 'Macro expansion rules';
     }
 
-    function isTestAllowed($testName)
+    protected function isTestAllowed(string $testName): bool
     {
         $ignored_tests = array(
             // @formatter:off
@@ -56,7 +54,7 @@ class RFC7208Test extends OpenSPFTest
         return !in_array($testName, $ignored_tests);
     }
 
-    function fixZoneData($scenarioName, $zoneData)
+    protected function fixZoneData(string $scenarioName, array $zoneData): array
     {
         if ($scenarioName == 'IP6 mechanism syntax') {
             // This syntax is deprecated and not supported by this library

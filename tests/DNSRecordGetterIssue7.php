@@ -11,62 +11,61 @@ use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
 class DNSRecordGetterIssue7 implements DNSRecordGetterInterface
 {
-    protected $requestCount = 0;
-    protected $requestMXCount = 0;
-    protected $requestPTRCount = 0;
+    protected int $requestCount = 0;
+    protected int $requestMXCount = 0;
+    protected int $requestPTRCount = 0;
 
-    protected $spfRecords = [
-    ];
+    protected array $spfRecords = [];
 
-    public function getSPFRecordForDomain($domain)
+    public function getSPFRecordForDomain(string $domain): array
     {
         return array();
     }
 
-    public function resolveA($domain, $ip4only = false)
+    public function resolveA(string $domain, bool $ip4only = false): array
     {
     }
 
-    public function resolveMx($domain)
+    public function resolveMx(string $domain): array
     {
     }
 
-    public function resolvePtr($ipAddress)
+    public function resolvePtr(string $ipAddress): array
     {
     }
 
-    public function exists($domain)
+    public function exists(string $domain): bool
     {
     }
 
-    public function resetRequestCount()
+    public function resetRequestCount(): void
     {
         trigger_error('DNSRecordGetterInterface::resetRequestCount() is deprecated. Please use resetRequestCounts() instead', E_USER_DEPRECATED);
         $this->resetRequestCounts();
     }
 
-    public function countRequest()
+    public function countRequest(): void
     {
         if (++$this->requestCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }
 
-    public function resetRequestCounts()
+    public function resetRequestCounts(): void
     {
         $this->requestCount    = 0;
         $this->requestMXCount  = 0;
         $this->requestPTRCount = 0;
     }
 
-    public function countMxRequest()
+    public function countMxRequest(): void
     {
         if (++$this->requestMXCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }
 
-    public function countPtrRequest()
+    public function countPtrRequest(): void
     {
         if (++$this->requestPTRCount > 10) {
             throw new DNSLookupLimitReachedException();

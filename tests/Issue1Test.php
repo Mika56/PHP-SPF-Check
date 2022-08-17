@@ -1,15 +1,12 @@
 <?php
-/**
- * Created by mikaelp on 4/26/2016 9:36 AM
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
-
 class Issue1Test extends \PHPUnit_Framework_TestCase
 {
-    /** @var  SPFCheck */
-    protected $SPFCheck;
+    protected SPFCheck $SPFCheck;
 
     protected function setUp()
     {

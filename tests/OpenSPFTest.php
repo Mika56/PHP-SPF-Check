@@ -1,8 +1,6 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -11,13 +9,13 @@ use Symfony\Component\Yaml\Yaml;
 
 abstract class OpenSPFTest extends \PHPUnit_Framework_TestCase
 {
-    abstract function isScenarioAllowed($scenarioName);
+    protected abstract function isScenarioAllowed(string $scenarioName): bool;
 
-    abstract function isTestAllowed($testName);
+    protected abstract function isTestAllowed(string $testName): bool;
 
-    abstract function fixZoneData($scenarioName, $zoneData);
+    protected abstract function fixZoneData(string $scenarioName, array $zoneData): array;
 
-    public function loadTestCases($scenarios)
+    public function loadTestCases(string $scenarios): array
     {
         $testCases = [];
         $scenarios = explode('---', $scenarios);
@@ -28,9 +26,12 @@ abstract class OpenSPFTest extends \PHPUnit_Framework_TestCase
                 $dnsData              = new DNSRecordGetterOpenSPF($scenario['zonedata']);
                 foreach ($scenario['tests'] as $testName => $test) {
                     if ($this->isTestAllowed($testName)) {
-                        $domain = substr(strrchr($test['mailfrom'], '@'), 1);
-                        if (empty($domain)) {
+                        $atPosition = strrchr($test['mailfrom'], '@');
+                        if($atPosition === false) {
                             $domain = $test['helo'];
+                        }
+                        else {
+                            $domain = substr($atPosition, 1);
                         }
                         $testCases[$scenario['description'].': '.$testName] = [
                             $test['host'], // $ipAddress

@@ -1,8 +1,6 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -25,19 +23,19 @@ class RFC4408Test extends OpenSPFTest
         );
     }
 
-    public function RFC4408DataProvider()
+    public function RFC4408DataProvider(): array
     {
         $scenarios = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'rfc4408-tests.yml');
 
         return $this->loadTestCases($scenarios);
     }
 
-    function isScenarioAllowed($scenarioName)
+    protected function isScenarioAllowed(string $scenarioName): bool
     {
         return $scenarioName != 'Macro expansion rules';
     }
 
-    function isTestAllowed($testName)
+    protected function isTestAllowed(string $testName): bool
     {
         $ignored_tests = array(
             // @formatter:off
@@ -50,7 +48,7 @@ class RFC4408Test extends OpenSPFTest
         return !in_array($testName, $ignored_tests);
     }
 
-    function fixZoneData($scenarioName, $zoneData)
+    protected function fixZoneData(string $scenarioName, array $zoneData): array
     {
         if ($scenarioName == 'IP6 mechanism syntax') {
             // This syntax is deprecated and not supported by this library
