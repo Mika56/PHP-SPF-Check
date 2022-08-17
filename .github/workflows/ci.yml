@@ -1,0 +1,37 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version: [7.4, 8.0, 8.1]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: php-actions/composer@v5
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@v7
+        with:
+          php_version: ${{ matrix.php_version }}
+          php_extensions: xdebug json
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml
+          args: --coverage-text
+        env:
+          XDEBUG_MODE: coverage
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-${{ matrix.php_version }}
+          parallel: true
+    services:
+      powerdns:
+        image: raspberrypython/powerdns-sqlite3:latest
+        env:
+          WEBPASSWD: password
+        ports:
+          - 53:53/udp
+          - 80:80
