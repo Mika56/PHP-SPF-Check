@@ -4,15 +4,17 @@
  * @author Mikael Peigney
  */
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
 
 
-class SPFCheckTest extends \PHPUnit_Framework_TestCase
+use Mika56\SPFCheck\SPFCheck;
+use PHPUnit\Framework\TestCase;
+
+class SPFCheckTest extends TestCase
 {
-    /** @var  SPFCheck */
-    protected $SPFCheck;
+    protected SPFCheck $SPFCheck;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->SPFCheck = new SPFCheck(new DNSRecordGetterFixture());
         parent::setUp();

@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
 
-class Issue1Test extends \PHPUnit_Framework_TestCase
+use Mika56\SPFCheck\SPFCheck;
+use PHPUnit\Framework\TestCase;
+
+class Issue1Test extends TestCase
 {
     protected SPFCheck $SPFCheck;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->SPFCheck = new SPFCheck(new DNSRecordGetterIssue1());
         parent::setUp();

@@ -1,12 +1,9 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
 
 
+use Mika56\SPFCheck\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
 class DNSRecordGetterIssue7 implements DNSRecordGetterInterface

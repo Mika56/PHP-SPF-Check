@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
 
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 
-abstract class OpenSPFTest extends \PHPUnit_Framework_TestCase
+abstract class OpenSPFTest extends TestCase
 {
     protected abstract function isScenarioAllowed(string $scenarioName): bool;
 
@@ -15,7 +16,7 @@ abstract class OpenSPFTest extends \PHPUnit_Framework_TestCase
 
     protected abstract function fixZoneData(string $scenarioName, array $zoneData): array;
 
-    public function loadTestCases(string $scenarios): array
+    protected function loadTestCases(string $scenarios): array
     {
         $testCases = [];
         $scenarios = explode('---', $scenarios);

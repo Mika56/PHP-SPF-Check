@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
+
+use Mika56\SPFCheck\DNSRecordGetterDirect;
+use Mika56\SPFCheck\SPFCheck;
+use PHPUnit\Framework\TestCase;
 
 /**
  * This tests ensures that when a DNS query fails with UDP, it is retried with TCP
  * TXT records might be too long to fit inside an UDP packet
  */
-class Pull34Test extends \PHPUnit_Framework_TestCase
+class Pull34Test extends TestCase
 {
     private string $dnsServer = '127.0.0.1';
+    private int $dnsServerPort = 53;
     private array $zonesToCreate = [
         'myloooooooooooooooooooooooooooooooooongfirstprovider.com',
         'myloooooooooooooooooooooooooooooooooongsecondprovider.com',
@@ -29,27 +34,30 @@ class Pull34Test extends \PHPUnit_Framework_TestCase
         if (array_key_exists('DNS_SERVER', $_ENV)) {
             $this->dnsServer = $_ENV['DNS_SERVER'];
         }
+        if (array_key_exists('DNS_SERVER_PORT', $_ENV)) {
+            $this->dnsServerPort = (int) $_ENV['DNS_SERVER_PORT'];
+        }
     }
 
     public function testPull34()
     {
         // UDP with TCP fallback
-        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, 53, 3);
+        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3);
         $SPFCheck        = new SPFCheck($dnsRecordGetter);
         $this->assertEquals(SPFCheck::RESULT_PASS, $SPFCheck->isIPAllowed('127.0.0.1', 'test.local.dev'));
 
         // TCP only
-        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, 53, 3, false);
+        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3, false);
         $SPFCheck        = new SPFCheck($dnsRecordGetter);
         $this->assertEquals(SPFCheck::RESULT_PASS, $SPFCheck->isIPAllowed('127.0.0.1', 'test.local.dev'));
 
         // UDP only
-        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, 53, 3, true, false);
+        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3, true, false);
         $SPFCheck        = new SPFCheck($dnsRecordGetter);
         $this->assertEquals(SPFCheck::RESULT_TEMPERROR, $SPFCheck->isIPAllowed('127.0.0.1', 'test.local.dev'));
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         // Ensure DNS server has no entries
         $this->tearDown();
@@ -83,7 +91,7 @@ class Pull34Test extends \PHPUnit_Framework_TestCase
         $this->dnsApi('servers/localhost/zones/test.local.dev.', 'PATCH', $postdata);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         foreach ($this->zonesToCreate as $zone) {
             @$this->dnsApi('servers/localhost/zones/'.$zone, 'DELETE');

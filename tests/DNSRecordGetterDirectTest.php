@@ -6,14 +6,18 @@
  */
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
+
+use Mika56\SPFCheck\DNSRecordGetterDirect;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Mika56\SPFCheck\DNSRecordGetterDirect
  */
-class DNSRecordGetterDirectTest extends \PHPUnit_Framework_TestCase
+class DNSRecordGetterDirectTest extends TestCase
 {
-    private $dnsServer = '127.0.0.1';
+    private string $dnsServer = '127.0.0.1';
+    private int $dnsServerPort = 53;
 
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
@@ -21,9 +25,12 @@ class DNSRecordGetterDirectTest extends \PHPUnit_Framework_TestCase
         if (array_key_exists('DNS_SERVER', $_ENV)) {
             $this->dnsServer = $_ENV['DNS_SERVER'];
         }
+        if (array_key_exists('DNS_SERVER_PORT', $_ENV)) {
+            $this->dnsServerPort = (int) $_ENV['DNS_SERVER_PORT'];
+        }
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         // Ensure DNS server has no entries
         $this->tearDown();
@@ -87,7 +94,7 @@ class DNSRecordGetterDirectTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSPFRecordForDomain()
     {
-        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, 53, 3, false);
+        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3, false);
 
         $result = $dnsRecordGetter->getSPFRecordForDomain('test.local.dev');
         $this->assertCount(1, $result);
@@ -99,7 +106,7 @@ class DNSRecordGetterDirectTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveMx()
     {
-        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer);
+        $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort);
 
         $result = $dnsRecordGetter->resolveMx('test.local.dev');
         $this->assertCount(1, $result);
@@ -109,7 +116,7 @@ class DNSRecordGetterDirectTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $result);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         @$this->dnsApi('servers/localhost/zones/test.local.dev', 'DELETE');
     }

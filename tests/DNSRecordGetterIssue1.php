@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
 
 
+use Mika56\SPFCheck\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupException;
 
 class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
 {
-    protected $spfRecords = [
+    protected array $spfRecords = [
         'domaina.com' => 'v=spf1 include:domainb.com include:domainc.com -all',
         'domainb.com' => 'v=spf1 -all',
         'domainc.com' => 'v=spf1 +ip4:127.0.0.1 -all',

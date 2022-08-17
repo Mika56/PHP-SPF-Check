@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
+
+use Mika56\SPFCheck\SPFCheck;
+use PHPUnit\Framework\TestCase;
 
 /**
  * This tests that A/AAAA, MX and PTR has separate request counts
  * @see https://github.com/Mika56/PHP-SPF-Check/pull/26#issuecomment-356751586
  * @see https://github.com/sdgathman/pyspf/blob/d9ee44addb98ede1ce3aec9fbf6cd84ff80da1fe/spf.py#L1288
  */
-class Issue25Test extends \PHPUnit_Framework_TestCase
+class Issue25Test extends TestCase
 {
     public function testIssue7()
     {

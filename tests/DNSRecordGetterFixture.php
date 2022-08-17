@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\Test;
 
 
+use Mika56\SPFCheck\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupException;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
