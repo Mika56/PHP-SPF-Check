@@ -1,16 +1,13 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
 
 class Issue7Test extends \PHPUnit_Framework_TestCase
 {
-    /** @var  SPFCheck */
-    protected $SPFCheck;
+    protected SPFCheck $SPFCheck;
 
     protected function setUp()
     {

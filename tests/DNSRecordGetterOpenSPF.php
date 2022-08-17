@@ -1,8 +1,6 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -14,12 +12,12 @@ use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
  */
 class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
 {
-    protected $data;
-    protected $requestCount;
-    protected $requestMXCount = 0;
-    protected $requestPTRCount = 0;
+    protected array $data;
+    protected int $requestCount;
+    protected int $requestMXCount = 0;
+    protected int $requestPTRCount = 0;
 
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = array();
         foreach ($data as $domain => $zones) {
@@ -44,7 +42,7 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         }
     }
 
-    public function getSPFRecordForDomain($domain)
+    public function getSPFRecordForDomain(string $domain): array
     {
         $domain     = strtolower($domain);
         $spfRecords = array();
@@ -74,7 +72,7 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         return $spfRecords;
     }
 
-    public function resolveA($domain, $ip4only = false)
+    public function resolveA(string $domain, $ip4only = false): array
     {
         $domain    = strtolower($domain);
         $addresses = array();
@@ -90,7 +88,7 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         return $addresses;
     }
 
-    public function resolveMx($domain)
+    public function resolveMx(string $domain): array
     {
         $domain    = strtolower($domain);
         $mxServers = array();
@@ -111,7 +109,7 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         return $mxServers;
     }
 
-    public function resolvePtr($ipAddress)
+    public function resolvePtr(string $ipAddress): array
     {
         if (stripos($ipAddress, '.') !== false) {
             // IPv4
@@ -130,7 +128,7 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         return array();
     }
 
-    public function exists($domain)
+    public function exists(string $domain): bool
     {
         $domain = strtolower($domain);
 
@@ -145,34 +143,34 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         return false;
     }
 
-    public function resetRequestCount()
+    public function resetRequestCount(): void
     {
         trigger_error('DNSRecordGetterInterface::resetRequestCount() is deprecated. Please use resetRequestCounts() instead', E_USER_DEPRECATED);
         $this->resetRequestCounts();
     }
 
-    public function countRequest()
+    public function countRequest(): void
     {
         if (++$this->requestCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }
 
-    public function resetRequestCounts()
+    public function resetRequestCounts(): void
     {
         $this->requestCount    = 0;
         $this->requestMXCount  = 0;
         $this->requestPTRCount = 0;
     }
 
-    public function countMxRequest()
+    public function countMxRequest(): void
     {
         if (++$this->requestMXCount > 10) {
             throw new DNSLookupLimitReachedException();
         }
     }
 
-    public function countPtrRequest()
+    public function countPtrRequest(): void
     {
         if (++$this->requestPTRCount > 10) {
             throw new DNSLookupLimitReachedException();

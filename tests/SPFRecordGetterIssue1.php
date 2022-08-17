@@ -1,7 +1,6 @@
 <?php
-/**
- * Created by mikaelp on 4/26/2016 9:36 AM
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -22,7 +21,7 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
 
     protected $ptrRecords = [];
 
-    public function getSPFRecordForDomain($domain)
+    public function getSPFRecordForDomain(string $domain): array
     {
         if (array_key_exists($domain, $this->spfRecords)) {
             if ($this->spfRecords[$domain] == '') {
@@ -35,7 +34,7 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
         throw new DNSLookupException;
     }
 
-    public function resolveA($domain, $ip4only = false)
+    public function resolveA(string $domain, bool $ip4only = false): array
     {
         if (array_key_exists($domain, $this->aRecords)) {
             return $this->aRecords[$domain];
@@ -44,7 +43,7 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
         return false;
     }
 
-    public function resolveMx($domain)
+    public function resolveMx(string $domain): array
     {
         if (array_key_exists($domain, $this->mxRecords)) {
             return $this->mxRecords[$domain];
@@ -53,7 +52,7 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
         return false;
     }
 
-    public function resolvePtr($ipAddress)
+    public function resolvePtr(string $ipAddress): array
     {
         if (array_key_exists($ipAddress, $this->ptrRecords)) {
             return $this->ptrRecords[$ipAddress];
@@ -62,28 +61,28 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
         return false;
     }
 
-    public function exists($domain)
+    public function exists(string $domain): bool
     {
         return array_key_exists($domain, $this->aRecords) && count($this->aRecords) > 0;
     }
 
-    public function resetRequestCount()
+    public function resetRequestCount(): void
     {
     }
 
-    public function countRequest()
+    public function countRequest(): void
     {
     }
 
-    public function resetRequestCounts()
+    public function resetRequestCounts(): void
     {
     }
 
-    public function countMxRequest()
+    public function countMxRequest(): void
     {
     }
 
-    public function countPtrRequest()
+    public function countPtrRequest(): void
     {
     }
 }

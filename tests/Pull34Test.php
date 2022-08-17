@@ -1,8 +1,6 @@
 <?php
-/**
- *
- * @author Mikael Peigney
- */
+
+declare(strict_types=1);
 
 namespace Mika56\SPFCheck;
 
@@ -12,8 +10,8 @@ namespace Mika56\SPFCheck;
  */
 class Pull34Test extends \PHPUnit_Framework_TestCase
 {
-    private $dnsServer = '127.0.0.1';
-    private $zonesToCreate = [
+    private string $dnsServer = '127.0.0.1';
+    private array $zonesToCreate = [
         'myloooooooooooooooooooooooooooooooooongfirstprovider.com',
         'myloooooooooooooooooooooooooooooooooongsecondprovider.com',
         'myloooooooooooooooooooooooooooooooooongthirdprovider.com',
@@ -25,7 +23,7 @@ class Pull34Test extends \PHPUnit_Framework_TestCase
         'myloooooooooooooooooooooooooooooooooongninthprovider.com',
     ];
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct(string $name = null, array $data = [], string $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         if (array_key_exists('DNS_SERVER', $_ENV)) {
@@ -93,7 +91,7 @@ class Pull34Test extends \PHPUnit_Framework_TestCase
         @$this->dnsApi('servers/localhost/zones/test.local.dev', 'DELETE');
     }
 
-    private function dnsApi($url, $method, $data = [])
+    private function dnsApi(string $url, string $method, array $data = [])
     {
         $opts = [
             'http' => [
@@ -105,10 +103,10 @@ class Pull34Test extends \PHPUnit_Framework_TestCase
 
         $context = stream_context_create($opts);
 
-        return file_get_contents('http://'.$this->dnsServer.':80/'.$url, false, $context);
+        file_get_contents('http://'.$this->dnsServer.':80/'.$url, false, $context);
     }
 
-    private function createZone($zone)
+    private function createZone(string $zone): void
     {
         $postdata = [
             'name'        => $zone,
