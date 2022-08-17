@@ -58,7 +58,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
     }
 
     /**
-     * @param $domain string The domain to get SPF record
+     * @param string $domain The domain to get SPF record
      * @return string[] The SPF record(s)
      * @throws DNSLookupException
      */
