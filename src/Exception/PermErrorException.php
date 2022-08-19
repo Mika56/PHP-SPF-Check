@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\Exception;
 
-
-class DNSLookupException extends \Exception
+class PermErrorException extends \Exception
 {
 
 }

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\Test;
 
-use Mika56\SPFCheck\DNSRecordGetterDirect;
+use Mika56\SPFCheck\DNS\DNSRecordGetterDirect;
+use Mika56\SPFCheck\Model\Result;
 use Mika56\SPFCheck\SPFCheck;
 use PHPUnit\Framework\TestCase;
 
@@ -44,17 +45,17 @@ class Pull34Test extends TestCase
         // UDP with TCP fallback
         $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3);
         $SPFCheck        = new SPFCheck($dnsRecordGetter);
-        $this->assertEquals(SPFCheck::RESULT_PASS, $SPFCheck->isIPAllowed('127.0.0.1', 'test.local.dev'));
+        $this->assertEquals(Result::SHORT_PASS, $SPFCheck->getIPStringResult('127.0.0.1', 'test.local.dev'));
 
         // TCP only
         $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3, false);
         $SPFCheck        = new SPFCheck($dnsRecordGetter);
-        $this->assertEquals(SPFCheck::RESULT_PASS, $SPFCheck->isIPAllowed('127.0.0.1', 'test.local.dev'));
+        $this->assertEquals(Result::SHORT_PASS, $SPFCheck->getIPStringResult('127.0.0.1', 'test.local.dev'));
 
         // UDP only
         $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3, true, false);
         $SPFCheck        = new SPFCheck($dnsRecordGetter);
-        $this->assertEquals(SPFCheck::RESULT_TEMPERROR, $SPFCheck->isIPAllowed('127.0.0.1', 'test.local.dev'));
+        $this->assertEquals(Result::SHORT_TEMPERROR, $SPFCheck->getIPStringResult('127.0.0.1', 'test.local.dev'));
     }
 
     public function setUp(): void

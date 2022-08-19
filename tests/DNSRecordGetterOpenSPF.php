@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\Test;
 
-use Mika56\SPFCheck\DNSRecordGetterInterface;
+use Mika56\SPFCheck\DNS\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupException;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
@@ -43,7 +43,7 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         }
     }
 
-    public function getSPFRecordForDomain(string $domain): array
+    public function getSPFRecordsForDomain(string $domain): array
     {
         $domain     = strtolower($domain);
         $spfRecords = array();
@@ -78,6 +78,10 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         $domain    = strtolower($domain);
         $addresses = array();
         if (array_key_exists($domain, $this->data)) {
+            if ($this->data[$domain] == 'TIMEOUT') {
+//                return [];
+                throw new DNSLookupException();
+            }
             if (array_key_exists('A', $this->data[$domain])) {
                 $addresses = array_merge($addresses, $this->data[$domain]['A']);
             }

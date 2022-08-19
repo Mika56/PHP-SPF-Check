@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Mika56\SPFCheck\Test;
 
 
-use Mika56\SPFCheck\DNSRecordGetterInterface;
+use Mika56\SPFCheck\DNS\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupException;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
@@ -57,7 +57,7 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
         '8.8.8.8'   => ['otherptr.com'],
     ];
 
-    public function getSPFRecordForDomain(string $domain): array
+    public function getSPFRecordsForDomain(string $domain): array
     {
         if (array_key_exists($domain, $this->spfRecords)) {
             if ($this->spfRecords[$domain] == '') {

@@ -8,11 +8,11 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\Test;
 
-use Mika56\SPFCheck\DNSRecordGetterDirect;
+use Mika56\SPFCheck\DNS\DNSRecordGetterDirect;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Mika56\SPFCheck\DNSRecordGetterDirect
+ * @covers \Mika56\SPFCheck\DNS\DNSRecordGetterDirect
  */
 class DNSRecordGetterDirectTest extends TestCase
 {
@@ -96,11 +96,11 @@ class DNSRecordGetterDirectTest extends TestCase
     {
         $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3, false);
 
-        $result = $dnsRecordGetter->getSPFRecordForDomain('test.local.dev');
+        $result = $dnsRecordGetter->getSPFRecordsForDomain('test.local.dev');
         $this->assertCount(1, $result);
         $this->assertContains('v=spf1 a -all', $result);
 
-        $result = $dnsRecordGetter->getSPFRecordForDomain('noexist.local.dev');
+        $result = $dnsRecordGetter->getSPFRecordsForDomain('noexist.local.dev');
         $this->assertEmpty($result);
     }
 

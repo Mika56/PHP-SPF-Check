@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\Test;
 
-use Mika56\SPFCheck\DNSRecordGetterInterface;
+use Mika56\SPFCheck\DNS\DNSRecordGetterInterface;
+use Mika56\SPFCheck\Exception\DNSLookupException;
 use Mika56\SPFCheck\SPFCheck;
 
 class RFC7208Test extends OpenSPFTest
@@ -15,14 +16,24 @@ class RFC7208Test extends OpenSPFTest
     public function testRFC7208(string $ipAddress, string $domain, DNSRecordGetterInterface $dnsData, array $expectedResult)
     {
         $spfCheck = new SPFCheck($dnsData);
-        $result   = $spfCheck->isIPAllowed($ipAddress, $domain);
+        $result   = $spfCheck->getIPStringResult($ipAddress, $domain);
+
+        try {
+            $spfRecords = $dnsData->getSPFRecordsForDomain($domain);
+            $spfRecord = $spfRecords[0] ?? '(none)';
+        } catch (DNSLookupException $e) {
+            $spfRecord = '(lookup exception)';
+        }
+
         $this->assertTrue(
             in_array($result, $expectedResult),
             'Failed asserting that (expected) '.(
             (count($expectedResult) == 1)
                 ? ($expectedResult[0].' equals ')
                 : ('('.implode(', ', $expectedResult).') contains '))
-            .'(result) '.$result
+            .'(result) '.$result.PHP_EOL
+            .'IP address: '.$ipAddress.PHP_EOL
+            .'SPF record: '.$spfRecord
         );
     }
 

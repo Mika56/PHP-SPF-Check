@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\Test;
 
+use Mika56\SPFCheck\Model\Result;
 use Mika56\SPFCheck\SPFCheck;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +20,6 @@ class Issue1Test extends TestCase
 
     public function testIssue1()
     {
-        $this->assertEquals(SPFCheck::RESULT_PASS, $this->SPFCheck->isIPAllowed('127.0.0.1', 'domaina.com'));
+        $this->assertEquals(Result::SHORT_PASS, $this->SPFCheck->getIPStringResult('127.0.0.1', 'domaina.com'));
     }
 }

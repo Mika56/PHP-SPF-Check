@@ -18,7 +18,7 @@
       <arguments>
         <array>
           <element key="dns-sensitive">
-            <string>Mika56\SPFCheck</string>
+            <string>Mika56\SPFCheck\DNS</string>
           </element>
         </array>
       </arguments>

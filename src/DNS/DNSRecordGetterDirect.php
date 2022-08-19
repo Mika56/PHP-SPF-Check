@@ -5,7 +5,7 @@ declare(strict_types=1);
  * @author Brian Tafoya <btafoya@briantafoya.com>
  */
 
-namespace Mika56\SPFCheck;
+namespace Mika56\SPFCheck\DNS;
 
 use Mika56\SPFCheck\Exception\DNSLookupException;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
@@ -53,7 +53,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
      * @return string[] The SPF record(s)
      * @throws DNSLookupException
      */
-    public function getSPFRecordForDomain(string $domain): array
+    public function getSPFRecordsForDomain(string $domain): array
     {
         $records = $this->dns_get_record($domain, "TXT");
         if (false === $records) {
