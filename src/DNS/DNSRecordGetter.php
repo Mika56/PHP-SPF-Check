@@ -6,14 +6,9 @@ namespace Mika56\SPFCheck\DNS;
 
 
 use Mika56\SPFCheck\Exception\DNSLookupException;
-use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
 class DNSRecordGetter implements DNSRecordGetterInterface
 {
-    protected int $requestCount = 0;
-    protected int $requestMXCount = 0;
-    protected int $requestPTRCount = 0;
-
     /**
      * @param string $domain The domain to get SPF record
      * @return string[] The SPF record(s)
@@ -102,40 +97,4 @@ class DNSRecordGetter implements DNSRecordGetterInterface
         }, dns_get_record($revIp, DNS_PTR));
     }
 
-    public function exists(string $domain): bool
-    {
-        try {
-            return count($this->resolveA($domain, true)) > 0;
-        } catch (DNSLookupException $e) {
-            return false;
-        }
-    }
-
-    public function countRequest(): void
-    {
-        if ($this->requestCount++ == 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
-
-    public function resetRequestCounts(): void
-    {
-        $this->requestCount    = 0;
-        $this->requestMXCount  = 0;
-        $this->requestPTRCount = 0;
-    }
-
-    public function countMxRequest(): void
-    {
-        if (++$this->requestMXCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
-
-    public function countPtrRequest(): void
-    {
-        if (++$this->requestPTRCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
 }

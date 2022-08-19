@@ -62,24 +62,4 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
         return false;
     }
 
-    public function exists(string $domain): bool
-    {
-        return array_key_exists($domain, $this->aRecords) && count($this->aRecords) > 0;
-    }
-
-    public function countRequest(): void
-    {
-    }
-
-    public function resetRequestCounts(): void
-    {
-    }
-
-    public function countMxRequest(): void
-    {
-    }
-
-    public function countPtrRequest(): void
-    {
-    }
 }
