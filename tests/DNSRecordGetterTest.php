@@ -6,7 +6,6 @@ namespace Mika56\SPFCheck\Test;
 
 
 use Mika56\SPFCheck\DNS\DNSRecordGetter;
-use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\DnsMock;
 
@@ -132,109 +131,6 @@ class DNSRecordGetterTest extends TestCase
         $result = $dnsRecordGetter->resolvePtr('fe80::');
         $this->assertCount(1, $result);
         $this->assertContains('example.com', $result);
-    }
-
-    public function testExists()
-    {
-        DnsMock::withMockedHosts([
-            'example.com' => [
-                [
-                    'type' => 'A',
-                    'ip'   => '127.0.0.1',
-                ],
-            ],
-        ]);
-
-        $dnsRecordGetter = new DNSRecordGetter();
-        $this->assertTrue($dnsRecordGetter->exists('example.com'));
-        $this->assertFalse($dnsRecordGetter->exists('example2.com'));
-    }
-
-    public function testLookupLimitEdge()
-    {
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countRequest();
-        }
-    }
-
-    public function testLookupLimitExceed()
-    {
-        $this->expectException(DNSLookupLimitReachedException::class);
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i <= 10; $i++) {
-            $dnsRecordGetter->countRequest();
-        }
-    }
-
-    public function testLookupLimitReset()
-    {
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countRequest();
-        }
-        $dnsRecordGetter->resetRequestCounts();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countRequest();
-        }
-    }
-
-    public function testMXLookupLimitEdge()
-    {
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countMxRequest();
-        }
-    }
-
-    public function testMXLookupLimitExceed()
-    {
-        $this->expectException(DNSLookupLimitReachedException::class);
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i <= 10; $i++) {
-            $dnsRecordGetter->countMxRequest();
-        }
-    }
-
-    public function testMXLookupLimitReset()
-    {
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countMxRequest();
-        }
-        $dnsRecordGetter->resetRequestCounts();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countMxRequest();
-        }
-    }
-
-    public function testPTRLookupLimitEdge()
-    {
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countPtrRequest();
-        }
-    }
-
-    public function testPTRLookupLimitExceed()
-    {
-        $this->expectException(DNSLookupLimitReachedException::class);
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i <= 10; $i++) {
-            $dnsRecordGetter->countPtrRequest();
-        }
-    }
-
-    public function testPTRLookupLimitReset()
-    {
-        $dnsRecordGetter = new DNSRecordGetter();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countPtrRequest();
-        }
-        $dnsRecordGetter->resetRequestCounts();
-        for ($i = 0; $i < 10; $i++) {
-            $dnsRecordGetter->countPtrRequest();
-        }
     }
 
 }

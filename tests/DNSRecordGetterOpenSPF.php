@@ -6,7 +6,6 @@ namespace Mika56\SPFCheck\Test;
 
 use Mika56\SPFCheck\DNS\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupException;
-use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
 /**
  * Class that understands OpenSPF's DNS records
@@ -14,9 +13,6 @@ use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
 {
     protected array $data;
-    protected int $requestCount;
-    protected int $requestMXCount = 0;
-    protected int $requestPTRCount = 0;
 
     public function __construct(array $data)
     {
@@ -133,46 +129,4 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         return array();
     }
 
-    public function exists(string $domain): bool
-    {
-        $domain = strtolower($domain);
-
-        if (array_key_exists($domain, $this->data)) {
-            if ($this->data[$domain] == 'TIMEOUT') {
-                throw new DNSLookupException();
-            }
-
-            return count($this->resolveA($domain, true)) > 0;
-        }
-
-        return false;
-    }
-
-    public function countRequest(): void
-    {
-        if (++$this->requestCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
-
-    public function resetRequestCounts(): void
-    {
-        $this->requestCount    = 0;
-        $this->requestMXCount  = 0;
-        $this->requestPTRCount = 0;
-    }
-
-    public function countMxRequest(): void
-    {
-        if (++$this->requestMXCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
-
-    public function countPtrRequest(): void
-    {
-        if (++$this->requestPTRCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
 }

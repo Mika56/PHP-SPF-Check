@@ -8,36 +8,16 @@ declare(strict_types=1);
 namespace Mika56\SPFCheck\DNS;
 
 use Mika56\SPFCheck\Exception\DNSLookupException;
-use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 use PurplePixie\PhpDns\DNSQuery;
 
 class DNSRecordGetterDirect implements DNSRecordGetterInterface
 {
 
-    protected int $requestCount = 0;
-    protected int $requestMXCount = 0;
-    protected int $requestPTRCount = 0;
     protected string $nameserver = "8.8.8.8";
     protected int $port = 53;
     protected int $timeout = 30;
     protected bool $udp = true;
     protected bool $tcpFallback;
-
-    const DNS_A = 'A';
-    const DNS_CNAME = "CNAME";
-    const DNS_HINFO = "HINFO";
-    const DNS_CAA = "CAA";
-    const DNS_MX = "MX";
-    const DNS_NS = "NS";
-    const DNS_PTR = "PTR";
-    const DNS_SOA = "SOA";
-    const DNS_TXT = "TXT";
-    const DNS_AAAA = "AAAA";
-    const DNS_SRV = "SRV";
-    const DNS_NAPTR = "NAPTR";
-    const DNS_A6 = "A6";
-    const DNS_ALL = "ALL";
-    const DNS_ANY = "ANY";
 
     public function __construct(string $nameserver = '8.8.8.8', int $port = 53, int $timeout = 30, bool $udp = true, bool $tcpFallback = true)
     {
@@ -139,16 +119,7 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         return $revs;
     }
 
-    public function exists(string $domain): bool
-    {
-        try {
-            return count($this->resolveA($domain, true)) > 0;
-        } catch (DNSLookupException $e) {
-            return false;
-        }
-    }
-
-    public function dns_get_record($question, $type): array
+    protected function dns_get_record($question, $type): array
     {
         $response = array();
 
@@ -236,31 +207,4 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         return $response;
     }
 
-    public function countRequest(): void
-    {
-        if (++$this->requestCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
-
-    public function resetRequestCounts(): void
-    {
-        $this->requestCount    = 0;
-        $this->requestMXCount  = 0;
-        $this->requestPTRCount = 0;
-    }
-
-    public function countMxRequest(): void
-    {
-        if (++$this->requestMXCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
-
-    public function countPtrRequest(): void
-    {
-        if (++$this->requestPTRCount > 10) {
-            throw new DNSLookupLimitReachedException();
-        }
-    }
 }
