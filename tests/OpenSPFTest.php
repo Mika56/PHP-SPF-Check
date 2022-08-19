@@ -14,8 +14,6 @@ abstract class OpenSPFTest extends TestCase
 
     protected abstract function isTestAllowed(string $testName): bool;
 
-    protected abstract function fixZoneData(string $scenarioName, array $zoneData): array;
-
     protected function loadTestCases(string $scenarios): array
     {
         $testCases = [];
@@ -23,8 +21,7 @@ abstract class OpenSPFTest extends TestCase
         foreach ($scenarios as $scenario) {
             $scenario = Yaml::parse($scenario);
             if ($scenario && $this->isScenarioAllowed($scenario['description'])) {
-                $scenario['zonedata'] = $this->fixZoneData($scenario['description'], $scenario['zonedata']);
-                $dnsData              = new DNSRecordGetterOpenSPF($scenario['zonedata']);
+                $dnsData = new DNSRecordGetterOpenSPF($scenario['zonedata']);
                 foreach ($scenario['tests'] as $testName => $test) {
                     if ($this->isTestAllowed($testName)) {
                         $atPosition = strrchr($test['mailfrom'], '@');

@@ -22,8 +22,14 @@ class MXEvaluator implements EvaluatorInterface
         $cidr = $targetVersion === 6 ? $mechanism->getCidr6() : $mechanism->getCidr4();
 
         $mxRecords = $result->getDNSSession()->resolveMX($mechanism->getHostname());
-        foreach ($mxRecords as $mxRecord) {
-            if(IpUtils::checkIp($target, array_map(function(string $record) use($cidr): string {return $record.'/'.$cidr;}, $mxRecord))) {
+        foreach ($mxRecords as $ipAddresses) {
+            $ipAddresses = array_filter($ipAddresses, function(string $address) use($targetVersion): bool {
+                $addressVersion = str_contains($address, ':') ? 6 : 4;
+                return $addressVersion === $targetVersion;
+            });
+            $ipAddresses = array_map(function(string $address) use($cidr): string {return $address.'/'.$cidr;}, $ipAddresses);
+
+            if(IpUtils::checkIp($target, $ipAddresses)) {
                 return true;
             }
         }
