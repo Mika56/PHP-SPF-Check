@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Mika56\SPFCheck\Test;
 
 
-use Mika56\SPFCheck\DNSRecordGetter;
+use Mika56\SPFCheck\DNS\DNSRecordGetter;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\DnsMock;
@@ -37,15 +37,15 @@ class DNSRecordGetterTest extends TestCase
 
         $dnsRecordGetter = new DNSRecordGetter();
 
-        $result = $dnsRecordGetter->getSPFRecordForDomain('example.com');
+        $result = $dnsRecordGetter->getSPFRecordsForDomain('example.com');
         $this->assertCount(1, $result);
         $this->assertContains('v=spf1 a', $result);
 
-        $result = $dnsRecordGetter->getSPFRecordForDomain('example2.com');
+        $result = $dnsRecordGetter->getSPFRecordsForDomain('example2.com');
         $this->assertCount(1, $result);
         $this->assertContains('v=spf1', $result);
 
-        $result = $dnsRecordGetter->getSPFRecordForDomain('example3.com');
+        $result = $dnsRecordGetter->getSPFRecordsForDomain('example3.com');
         $this->assertEmpty($result);
     }
 

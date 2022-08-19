@@ -13,7 +13,7 @@ Run `composer require mika56/spfcheck` or add this to your composer.json:
 ```json
 {
   "require": {
-    "mika56/spfcheck": "^1"
+    "mika56/spfcheck": "^2.0"
   }
 }
 ```
@@ -22,24 +22,28 @@ Run `composer require mika56/spfcheck` or add this to your composer.json:
 Create a new instance of SPFCheck. The constructor requires a DNSRecordGetterInterface to be passed. Currently, you have two options:
 - `DNSRecordGetter` which uses PHP's DNS functions to get data
 - `DNSRecordGetterDirect` which uses the [PHP DNS Direct Query Module](https://github.com/purplepixie/phpdns) to get data.
+
 ```php
 <?php
+use Mika56\SPFCheck\DNS\DNSRecordGetter;
+use Mika56\SPFCheck\DNS\DNSRecordGetterDirect;
 use Mika56\SPFCheck\SPFCheck;
-use Mika56\SPFCheck\DNSRecordGetter;
-use Mika56\SPFCheck\DNSRecordGetterDirect;
 
 require('vendor/autoload.php');
 
 $checker = new SPFCheck(new DNSRecordGetter()); // Uses php's dns_get_record method for lookup.
-var_dump($checker->isIPAllowed('127.0.0.1', 'test.com'));
+var_dump($checker->getIPStringResult('127.0.0.1', 'test.com'));
 
 // or
 
 $checker = new SPFCheck(new DNSRecordGetterDirect("8.8.8.8")); // Uses phpdns, allowing you to set the nameserver you wish to use for the dns queries.
-var_dump($checker->isIPAllowed('127.0.0.1', 'test.com'));
+var_dump($checker->getIPStringResult('127.0.0.1', 'test.com'));
 ```
 
-Return value is one of `SPFCheck::RESULT_PASS`, `SPFCheck::RESULT_FAIL`, `SPFCheck::RESULT_SOFTFAIL`, `SPFCheck::RESULT_NEUTRAL`, `SPFCheck::RESULT_NONE`, `SPFCheck::RESULT_PERMERROR`, `SPFCheck::RESULT_TEMPERROR`
+Return value is one of `Result::PASS`, `Result::FAIL`, `Result::SOFTFAIL`, `Result::NEUTRAL`, `Result::NONE`, `Result::PERMERROR`, `Result::TEMPERROR`
+
+If you want to get more details about the check, you can use `SPFCheck::getIPResult(string $ipAddress, string $domainName): Result` which will return a 
+`Result` object with more details about the check.
 
 ## Missing features
 A few features are still missing from this library at the moment. Here's a partial list of those features:

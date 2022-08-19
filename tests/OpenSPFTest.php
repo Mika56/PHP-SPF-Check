@@ -55,7 +55,7 @@ abstract class OpenSPFTest extends TestCase
         }
 
         foreach ($result as &$res) {
-            $constantName = '\Mika56\SPFCheck\SPFCheck::RESULT_'.strtoupper($res);
+            $constantName = '\Mika56\SPFCheck\Model\Result::SHORT_'.strtoupper($res);
             if (defined($constantName)) {
                 $res = constant($constantName);
             } else {

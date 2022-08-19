@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\Test;
 
+use Mika56\SPFCheck\Model\Result;
 use Mika56\SPFCheck\SPFCheck;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +24,7 @@ class Issue25Test extends TestCase
                 ['MX' => [10, 'e1.example.com']],
             ],
         ]));
-        $this->assertEquals(SPFCheck::RESULT_FAIL, $SPFCheck->isIPAllowed('127.0.0.1', 'e1.example.com'));
+        $this->assertEquals(Result::SHORT_FAIL, $SPFCheck->getIPStringResult('127.0.0.1', 'e1.example.com'));
     }
 
     public function testIssue7MXAtLimit()
@@ -37,7 +38,7 @@ class Issue25Test extends TestCase
                 ['MX' => [30, 'e1.example.com']],
             ],
         ]));
-        $this->assertEquals(SPFCheck::RESULT_PERMERROR, $SPFCheck->isIPAllowed('127.0.0.1', 'e1.example.com'));
+        $this->assertEquals(Result::SHORT_PERMERROR, $SPFCheck->getIPStringResult('127.0.0.1', 'e1.example.com'));
     }
 
     public function testIssue7MXExceeded()
@@ -51,7 +52,7 @@ class Issue25Test extends TestCase
                 ['MX' => [30, 'e1.example.com']],
             ],
         ]));
-        $this->assertEquals(SPFCheck::RESULT_PERMERROR, $SPFCheck->isIPAllowed('127.0.0.1', 'e1.example.com'));
+        $this->assertEquals(Result::SHORT_PERMERROR, $SPFCheck->getIPStringResult('127.0.0.1', 'e1.example.com'));
     }
 
     public function testIssue7PTR()
@@ -62,7 +63,7 @@ class Issue25Test extends TestCase
                 ['A' => '1.2.3.8'],
             ],
         ]));
-        $this->assertEquals(SPFCheck::RESULT_FAIL, $SPFCheck->isIPAllowed('127.0.0.1', 'e1.example.com'));
+        $this->assertEquals(Result::SHORT_FAIL, $SPFCheck->getIPStringResult('127.0.0.1', 'e1.example.com'));
     }
 
     public function testIssue7PTRAtLimit()
@@ -73,7 +74,7 @@ class Issue25Test extends TestCase
                 ['A' => '1.2.3.8'],
             ],
         ]));
-        $this->assertEquals(SPFCheck::RESULT_FAIL, $SPFCheck->isIPAllowed('127.0.0.1', 'e1.example.com'));
+        $this->assertEquals(Result::SHORT_FAIL, $SPFCheck->getIPStringResult('127.0.0.1', 'e1.example.com'));
     }
 
     public function testIssue7PTRExceeded()
@@ -84,6 +85,6 @@ class Issue25Test extends TestCase
                 ['A' => '1.2.3.8'],
             ],
         ]));
-        $this->assertEquals(SPFCheck::RESULT_PERMERROR, $SPFCheck->isIPAllowed('127.0.0.1', 'e1.example.com'));
+        $this->assertEquals(Result::SHORT_PERMERROR, $SPFCheck->getIPStringResult('127.0.0.1', 'e1.example.com'));
     }
 }

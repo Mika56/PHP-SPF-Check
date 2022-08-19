@@ -3,7 +3,7 @@
 namespace Mika56\SPFCheck\Test;
 
 
-use Mika56\SPFCheck\DNSRecordGetterInterface;
+use Mika56\SPFCheck\DNS\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
 
 class DNSRecordGetterIssue7 implements DNSRecordGetterInterface
@@ -14,7 +14,7 @@ class DNSRecordGetterIssue7 implements DNSRecordGetterInterface
 
     protected array $spfRecords = [];
 
-    public function getSPFRecordForDomain(string $domain): array
+    public function getSPFRecordsForDomain(string $domain): array
     {
         return array();
     }
