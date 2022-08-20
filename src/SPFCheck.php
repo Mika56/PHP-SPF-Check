@@ -8,13 +8,17 @@ use Mika56\SPFCheck\DNS\DNSRecordGetterInterface;
 use Mika56\SPFCheck\DNS\Session;
 use Mika56\SPFCheck\Exception\DNSLookupException;
 use Mika56\SPFCheck\Exception\DNSLookupLimitReachedException;
+use Mika56\SPFCheck\Exception\MacroSyntaxError;
 use Mika56\SPFCheck\Exception\PermErrorException;
 use Mika56\SPFCheck\Exception\TempErrorException;
 use Mika56\SPFCheck\Mechanism\{A, AbstractMechanism, All, Exists, IncludeMechanism, IP, MX, PTR};
 use Mika56\SPFCheck\MechanismEvaluator\{AEvaluator, AllEvaluator, ExistsEvaluator, IncludeEvaluator, IPEvaluator, MXEvaluator, PTREvaluator};
+use Mika56\SPFCheck\Model\Query;
 use Mika56\SPFCheck\Model\Record;
 use Mika56\SPFCheck\Model\Result;
+use Mika56\SPFCheck\Modifier\Explanation;
 use Mika56\SPFCheck\Modifier\Redirect;
+use const true;
 
 class SPFCheck
 {
@@ -43,8 +47,17 @@ class SPFCheck
         return $result;
     }
 
-    public function getIPResult(string $ipAddress, string $domainName, ?Result $result = null): Result
+    //public function getIPResult(string $ipAddress, string $domainName, ?Result $result = null): Result
+
+    public function getResult(Query $query): Result
     {
+        return $this->doGetResult($query);
+    }
+
+    private function doGetResult(Query $query, ?Result $result = null): Result
+    {
+        $domainName = $query->getDomainName();
+        $ipAddress = $query->getIpAddress();
         $result??= new Result(new Session($this->DNSRecordGetter));
 
         if(empty($domainName)) {
@@ -79,26 +92,46 @@ class SPFCheck
             return $result;
         }
 
-        if (preg_match('/^(:|0000:0000:0000:0000:0000):FFFF:/i', $ipAddress)) {
-            $ipAddress = strrev(explode(':', strrev($ipAddress), 2)[0]);
-        }
-
         $redirect = null;
         $result->setRecord($record);
         foreach ($record->getTerms() as $term) {
             if($term instanceof AbstractMechanism) {
                 $evaluator = SPFCheck::getEvaluatorFor($term);
                 try {
-                    $matches = $evaluator::matches($term, $ipAddress, $result, $this);
+                    if ($evaluator === IncludeEvaluator::class) {
+                        // Include evaluator needs access to SPFCheck::doGetResult
+                        $matches = $evaluator::matches($term, $query, $result, function(Query $query, Result $result): Result {return $this->doGetResult($query, $result);});
+                    }
+                    else {
+                        $matches = $evaluator::matches($term, $query, $result);
+                    }
                 }
                 catch(DNSLookupLimitReachedException|PermErrorException|TempErrorException $e) {
-                    $result->setResult($e instanceof TempErrorException ? Result::TEMPERROR : Result::PERMERROR);
+                    $result->setResult($e instanceof TempErrorException ? Result::TEMPERROR : Result::PERMERROR, $e->getMessage());
                     $result->addStep($term, null);
 
                     return $result;
                 }
                 $result->addStep($term, $matches);
                 if($matches) {
+                    if($record->hasExplanation()) {
+                        try {
+                            $explanationHost = MacroUtils::expandMacro($record->getExplanation()->getHostname(), $query, $result->getDNSSession(), true);
+                            $explanationHost = MacroUtils::truncateDomainName($explanationHost);
+                            $explanationTXT = $result->getDNSSession()->resolveTXT($explanationHost);
+                            if(count($explanationTXT) === 1) {
+                                $explanation = MacroUtils::expandMacro($explanationTXT[0], $query, $result->getDNSSession(), true);
+                                // Only allow ASCII explanations
+                                if(1===preg_match('`^[[:ascii:]]*$`', $explanation)) {
+                                    $result->setExplanation($explanation);
+                                }
+                            }
+                        }
+                        catch(DNSLookupException|MacroSyntaxError $e) {
+                            /* If <domain-spec> is empty, or there are any DNS processing errors[...],
+                            or if there are syntax errors in the explanation string then proceed as if no exp modifier was given. */
+                        }
+                    }
                     $result->setShortResult($term->getQualifier());
 
                     return $result;
@@ -117,15 +150,27 @@ class SPFCheck
 
                 return $result;
             }
-            $redirectResult = $this->getIPResult($ipAddress, $redirect->getHostname(), $result);
-            if($redirectResult->getResult() === Result::NONE) {
-                $redirectResult->setResult(Result::PERMERROR, Result::REDIRECT_RESULTED_IN_NONE);
-            }
+            try {
+                $redirectTarget = MacroUtils::expandMacro($redirect->getHostname(), $query, $result->getDNSSession(), false);
+                $redirectQuery = $query->createRedirectedQuery($redirectTarget);
+                $redirectResult = $this->doGetResult($redirectQuery, $result);
+                if($redirectResult->getResult() === Result::NONE) {
+                    $redirectResult->setResult(Result::PERMERROR, Result::REDIRECT_RESULTED_IN_NONE);
+                }
 
-            return $redirectResult;
+                return $redirectResult;
+            }
+            catch(MacroSyntaxError $e) {
+                if($e->isFatal()) {
+                    // However, c, r and t are only allowed in exp and should result in a PE if used in a redirect
+                    $result->setResult(Result::PERMERROR);
+
+                    return $result;
+                }
+            }
         }
 
-        $result->setResult(Result::NEUTRAL, Result::DEFAULT_RESULT);
+        $result->setResult(Result::NEUTRAL);
 
         return $result;
     }
@@ -137,7 +182,8 @@ class SPFCheck
      */
     public function getIPStringResult(string $ipAddress, string $domain): string
     {
-        $result = $this->getIPResult($ipAddress, $domain);
+        $query = new Query($ipAddress, $domain);
+        $result = $this->getResult($query);
 
         return $result->getShortResult();
     }
@@ -161,4 +207,5 @@ class SPFCheck
                 return IncludeEvaluator::class;
         }
     }
+
 }

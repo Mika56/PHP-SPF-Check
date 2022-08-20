@@ -72,6 +72,14 @@ final class Session
     }
 
     /**
+     * @throws DNSLookupException
+     */
+    public function resolveTXT(string $hostname): array
+    {
+        return $this->DNSRecordGetter->resolveTXT($hostname);
+    }
+
+    /**
      * @throws DNSLookupLimitReachedException
      */
     public function countRedirect(): void

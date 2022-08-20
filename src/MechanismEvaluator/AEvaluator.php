@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Mika56\SPFCheck\MechanismEvaluator;
 
+use Mika56\SPFCheck\MacroUtils;
 use Mika56\SPFCheck\Mechanism\A;
 use Mika56\SPFCheck\Mechanism\AbstractMechanism;
+use Mika56\SPFCheck\Model\Query;
 use Mika56\SPFCheck\Model\Result;
-use Mika56\SPFCheck\SPFCheck;
 use Symfony\Component\HttpFoundation\IpUtils;
 
 class AEvaluator implements EvaluatorInterface
 {
 
-    public static function matches(AbstractMechanism $mechanism, string $target, Result $result, SPFCheck $spfCheck): bool
+    public static function matches(AbstractMechanism $mechanism, Query $query, Result $result): bool
     {
         if(!$mechanism instanceof A) {
             throw new \LogicException();
         }
-        $targetVersion = str_contains($target, ':') ? 6 : 4;
+        $targetVersion = str_contains($query->getIpAddress(), ':') ? 6 : 4;
 
-        $aRecords = $result->getDNSSession()->resolveA($mechanism->getHostname());
+        $hostname = $mechanism->getHostname();
+        $hostname = MacroUtils::expandMacro($hostname, $query, $result->getDNSSession(), false);
+        $hostname = MacroUtils::truncateDomainName($hostname);
+        $aRecords = $result->getDNSSession()->resolveA($hostname);
         if(empty($aRecords)) {
             $result->countVoidLookup();
         }
@@ -31,7 +35,7 @@ class AEvaluator implements EvaluatorInterface
             if($recordVersion !== $targetVersion) {
                 continue;
             }
-            if(IpUtils::checkIp($target, $record.'/'.$cidr)) {
+            if(IpUtils::checkIp($query->getIpAddress(), $record.'/'.$cidr)) {
                 return true;
             }
         }

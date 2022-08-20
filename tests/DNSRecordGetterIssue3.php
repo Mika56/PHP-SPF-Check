@@ -30,13 +30,21 @@ class DNSRecordGetterIssue3 implements DNSRecordGetterInterface
 
     public function resolveA(string $domain, bool $ip4only = false): array
     {
+        return [];
     }
 
     public function resolveMx(string $domain): array
     {
+        return [];
     }
 
     public function resolvePtr(string $ipAddress): array
     {
+        return [];
+    }
+
+    public function resolveTXT(string $domain): array
+    {
+        return [];
     }
 }

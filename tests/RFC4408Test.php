@@ -6,6 +6,7 @@ namespace Mika56\SPFCheck\Test;
 
 use Mika56\SPFCheck\DNS\DNSRecordGetterInterface;
 use Mika56\SPFCheck\Exception\DNSLookupException;
+use Mika56\SPFCheck\Model\Query;
 use Mika56\SPFCheck\SPFCheck;
 
 class RFC4408Test extends OpenSPFTest
@@ -13,10 +14,10 @@ class RFC4408Test extends OpenSPFTest
     /**
      * @dataProvider RFC4408DataProvider
      */
-    public function testRFC4408($ipAddress, $domain, DNSRecordGetterInterface $dnsData, $expectedResult)
+    public function testRFC4408($ipAddress, $domain, DNSRecordGetterInterface $dnsData, $expectedResult, ?string $explanation, ?string $helo = null, ?string $sender = null)
     {
         $spfCheck = new SPFCheck($dnsData);
-        $result = $spfCheck->getIPStringResult($ipAddress, $domain);
+        $result = $spfCheck->getResult(new Query($ipAddress, $domain, $helo, $sender));
 
         try {
             $spfRecords = $dnsData->getSPFRecordsForDomain($domain);
@@ -26,15 +27,18 @@ class RFC4408Test extends OpenSPFTest
         }
 
         $this->assertTrue(
-            in_array($result, $expectedResult),
+            in_array($result->getShortResult(), $expectedResult),
             'Failed asserting that (expected) '.(
             (count($expectedResult) == 1)
                 ? ($expectedResult[0].' equals ')
                 : ('('.implode(', ', $expectedResult).') contains '))
-            .'(result) '.$result.PHP_EOL
+            .'(result) '.$result->getShortResult().' - '.$result->getExplanation().PHP_EOL
             .'IP address: '.$ipAddress.PHP_EOL
             .'SPF record: '.$spfRecord
         );
+        if($explanation) {
+            $this->assertEquals($explanation, $result->getExplanation(), 'Incorrect explanation');
+        }
     }
 
     public function RFC4408DataProvider(): array
@@ -44,14 +48,9 @@ class RFC4408Test extends OpenSPFTest
         return $this->loadTestCases($scenarios);
     }
 
-    protected function isScenarioAllowed(string $scenarioName): bool
-    {
-        return $scenarioName != 'Macro expansion rules';
-    }
-
     protected function isTestAllowed(string $testName): bool
     {
-        return true;
+        return $testName !== 'exp-only-macro-char'; // {@see RFC7208Test::isTestAllowed} for more details
     }
 
 }

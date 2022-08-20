@@ -91,4 +91,9 @@ class DNSRecordGetterFixture implements DNSRecordGetterInterface
 
         return array();
     }
+
+    public function resolveTXT(string $domain): array
+    {
+        return [];
+    }
 }

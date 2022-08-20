@@ -62,4 +62,8 @@ class DNSRecordGetterIssue1 implements DNSRecordGetterInterface
         return false;
     }
 
+    public function resolveTXT(string $domain): array
+    {
+        return [];
+    }
 }
