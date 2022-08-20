@@ -97,4 +97,21 @@ class DNSRecordGetter implements DNSRecordGetterInterface
         }, dns_get_record($revIp, DNS_PTR));
     }
 
+    public function resolveTXT(string $domain): array
+    {
+        $records = dns_get_record($domain, DNS_TXT);
+        if (false === $records) {
+            throw new DNSLookupException;
+        }
+
+        $texts = [];
+
+        foreach ($records as $record) {
+            if ($record['type'] === "TXT") {
+                $texts[] = $record['txt'];
+            }
+        }
+
+        return $texts;
+    }
 }

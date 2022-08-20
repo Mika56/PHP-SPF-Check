@@ -119,6 +119,24 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         return $revs;
     }
 
+    public function resolveTXT(string $domain): array
+    {
+        $records = $this->dns_get_record($domain, "TXT");
+        if (false === $records) {
+            throw new DNSLookupException;
+        }
+
+        $texts = [];
+
+        foreach ($records as $record) {
+            if ($record['type'] === "TXT") {
+                $texts[] = $record['txt'];
+            }
+        }
+
+        return $texts;
+    }
+
     protected function dns_get_record($question, $type): array
     {
         $response = array();
@@ -206,5 +224,4 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
 
         return $response;
     }
-
 }

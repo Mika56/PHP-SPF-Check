@@ -10,8 +10,6 @@ use Symfony\Component\Yaml\Yaml;
 
 abstract class OpenSPFTest extends TestCase
 {
-    protected abstract function isScenarioAllowed(string $scenarioName): bool;
-
     protected abstract function isTestAllowed(string $testName): bool;
 
     protected function loadTestCases(string $scenarios): array
@@ -20,25 +18,30 @@ abstract class OpenSPFTest extends TestCase
         $scenarios = explode('---', $scenarios);
         foreach ($scenarios as $scenario) {
             $scenario = Yaml::parse($scenario);
-            if ($scenario && $this->isScenarioAllowed($scenario['description'])) {
-                $dnsData = new DNSRecordGetterOpenSPF($scenario['zonedata']);
-                foreach ($scenario['tests'] as $testName => $test) {
-                    if ($this->isTestAllowed($testName)) {
-                        $atPosition = strrchr($test['mailfrom'], '@');
-                        if($atPosition === false) {
-                            $domain = $test['helo'];
-                        }
-                        else {
-                            $domain = substr($atPosition, 1);
-                        }
-                        $testCases[$scenario['description'].': '.$testName] = [
-                            $test['host'], // $ipAddress
-                            $domain,
-                            $dnsData,
-                            self::strToConst($test['result']), // $expectedResult
-                        ];
-                    }
+            if(!$scenario) {
+                continue;
+            }
+            $dnsData = new DNSRecordGetterOpenSPF($scenario['zonedata']);
+            foreach ($scenario['tests'] as $testName => $test) {
+                if (!$this->isTestAllowed($testName)) {
+                    continue;
                 }
+                $atPosition = strrchr($test['mailfrom'], '@');
+                if($atPosition === false) {
+                    $domain = $test['helo'];
+                }
+                else {
+                    $domain = substr($atPosition, 1);
+                }
+                $testCases[$scenario['description'].': '.$testName] = [
+                    $test['host'], // $ipAddress
+                    $domain,
+                    $dnsData,
+                    self::strToConst($test['result']), // $expectedResult
+                    $test['explanation'] ?? null,
+                    $test['helo'] ?? null,
+                    $test['mailfrom'] ?? null,
+                ];
             }
         }
 

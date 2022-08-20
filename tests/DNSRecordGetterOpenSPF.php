@@ -75,7 +75,6 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         $addresses = array();
         if (array_key_exists($domain, $this->data)) {
             if ($this->data[$domain] == 'TIMEOUT') {
-//                return [];
                 throw new DNSLookupException();
             }
             if (array_key_exists('A', $this->data[$domain])) {
@@ -129,4 +128,18 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         return array();
     }
 
+    public function resolveTXT(string $domain): array
+    {
+        $domain    = strtolower($domain);
+        if (array_key_exists($domain, $this->data)) {
+            if ($this->data[$domain] == 'TIMEOUT') {
+                throw new DNSLookupException();
+            }
+            if (array_key_exists('TXT', $this->data[$domain])) {
+                return $this->data[$domain]['TXT'];
+            }
+        }
+
+        return [];
+    }
 }

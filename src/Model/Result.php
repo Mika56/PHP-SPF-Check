@@ -24,7 +24,7 @@ class Result
     public const PERMERROR = 'PermError';
     public const SHORT_PERMERROR = 'PE';
 
-    public const DEFAULT_RESULT = 'DefaultResult';
+    public const DEFAULT_RESULT = 'DEFAULT'; // This is the default string used in rfc4408/7208-tests.yml
     public const A_DNS_LOOKUP_ERROR_OCCURED = 'DNSLookupError';
     public const DOMAIN_HAS_NO_SPF_RECORD = 'NoSPFRecord';
     public const DOMAIN_HAS_MORE_THAN_ONE_SPF_RECORD = 'MoreThanOneSPFRecord';
@@ -33,7 +33,7 @@ class Result
 
     private Session $DNSSession;
     private string $result;
-    private ?string $reason;
+    private ?string $explanation = self::DEFAULT_RESULT; // If no "exp" modifier is present, then either a default explanation string or an empty explanation string may be returned.
     private Record $record;
     private array $steps = [];
     private int $voidLookups = 0;
@@ -85,13 +85,18 @@ class Result
         throw new \LogicException('Invalid result '.$this->result);
     }
 
+    public function getExplanation(): ?string
+    {
+        return $this->explanation;
+    }
+
     /**
      * @internal
      */
-    public function setResult(string $result, ?string $reason = null): self
+    public function setResult(string $result, ?string $explanation = null): self
     {
-        $this->result = $result;
-        $this->reason = $reason;
+        $this->result      = $result;
+        $this->explanation = $explanation;
 
         return $this;
     }
@@ -126,6 +131,16 @@ class Result
             default:
                 throw new \InvalidArgumentException('Invalid short result '.$result);
         }
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     */
+    public function setExplanation(?string $explanation): self
+    {
+        $this->explanation = $explanation;
 
         return $this;
     }

@@ -44,9 +44,3 @@ Return value is one of `Result::PASS`, `Result::FAIL`, `Result::SOFTFAIL`, `Resu
 
 If you want to get more details about the check, you can use `SPFCheck::getIPResult(string $ipAddress, string $domainName): Result` which will return a 
 `Result` object with more details about the check.
-
-## Missing features
-A few features are still missing from this library at the moment. Here's a partial list of those features:
-* [Section 7 of RFC7208](https://tools.ietf.org/html/rfc7208#section-7) on macros
-
-You are very welcome to submit a pull request adding even part of those features.
