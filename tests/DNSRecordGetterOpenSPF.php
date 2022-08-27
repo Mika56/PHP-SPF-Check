@@ -43,26 +43,27 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
     {
         $domain     = strtolower($domain);
         $spfRecords = array();
-        if (array_key_exists($domain, $this->data)) {
-            if ($this->data[$domain] == 'TIMEOUT') {
-                throw new DNSLookupException();
-            }
-            $spf = array();
+        if(!array_key_exists($domain, $this->data)) {
+            return [];
+        }
+        if ($this->data[$domain] == 'TIMEOUT') {
+            throw new DNSLookupException();
+        }
+        $spf = array();
 
-            if (array_key_exists('SPF', $this->data[$domain]) && !array_key_exists('TXT', $this->data[$domain])) {
-                $spf = $this->data[$domain]['SPF'];
-            } elseif (array_key_exists('TXT', $this->data[$domain])) {
-                $spf = $this->data[$domain]['TXT'];
-            }
-            if (!is_array($spf)) {
-                $spf = array($spf);
-            }
+        if (array_key_exists('SPF', $this->data[$domain]) && !array_key_exists('TXT', $this->data[$domain])) {
+            $spf = $this->data[$domain]['SPF'];
+        } elseif (array_key_exists('TXT', $this->data[$domain])) {
+            $spf = $this->data[$domain]['TXT'];
+        }
+        if (!is_array($spf)) {
+            $spf = array($spf);
+        }
 
-            foreach ($spf as $record) {
-                $record = strtolower($record);
-                if ($record == 'v=spf1' || stripos($record, 'v=spf1 ') === 0) {
-                    $spfRecords[] = $record;
-                }
+        foreach ($spf as $record) {
+            $record = strtolower($record);
+            if ($record == 'v=spf1' || stripos($record, 'v=spf1 ') === 0) {
+                $spfRecords[] = $record;
             }
         }
 

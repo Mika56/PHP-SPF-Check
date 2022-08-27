@@ -1,0 +1,17 @@
+description: Issue 1
+tests:
+  include-permerror:
+    description: >-
+      Continue processing next include if an include results in a Fail, SoftFail or Neutral
+    spec: 5.2/6
+    helo: mail.example.net
+    host: 127.0.0.1
+    mailfrom: postmaster@example.com
+    result: pass
+zonedata:
+  example.com:
+    - SPF: 'v=spf1 include:example.net include:example.org -all'
+  example.net:
+    - SPF: 'v=spf1 -all'
+  example.org:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'

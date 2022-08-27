@@ -1,0 +1,10 @@
+description: Issue 7
+tests:
+  default-none:
+    description: >-
+      A domain without any SPF record should result in a none
+    helo: mail.example.net
+    host: 127.0.0.1
+    mailfrom: postmaster@example.com
+    result: none
+zonedata: []
