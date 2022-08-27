@@ -1,0 +1,206 @@
+description: Base tests #that were created before importing test suite
+tests:
+  1:
+    host: 127.0.0.1
+    mailfrom: postmaster@test.example.com
+    result: pass
+  2:
+    host: 172.16.0.1
+    mailfrom: postmaster@test.example.com
+    result: pass
+  3:
+    host: 192.168.0.1
+    mailfrom: postmaster@test.example.com
+    result: pass
+  4:
+    host: fe80::8a2e:370:7334
+    mailfrom: postmaster@test.example.com
+    result: pass
+  5:
+    host: 192.168.255.254
+    mailfrom: postmaster@test.example.com
+    result: fail
+  6:
+    host: 127.0.0.1
+    mailfrom: postmaster@test4nocidr.example.com
+    result: pass
+  7:
+    host: 127.0.0.2
+    mailfrom: postmaster@test4nocidr.example.com
+    result: fail
+  8:
+    host: fe80::
+    mailfrom: postmaster@test6nocidr.example.com
+    result: pass
+  9:
+    host: fe80::1
+    mailfrom: postmaster@test6nocidr.example.com
+    result: fail
+  10:
+    host: 192.168.0.1
+    mailfrom: postmaster@testa.example.com
+    result: pass
+  11:
+    host: 192.168.0.254
+    mailfrom: postmaster@testa.example.com
+    result: pass
+  12:
+    host: 172.16.0.1
+    mailfrom: postmaster@testadomcidr.example.com
+    result: pass
+  13:
+    host: 172.16.0.2
+    mailfrom: postmaster@testadomcidr.example.com
+    result: pass
+  14:
+    host: 172.16.1.2
+    mailfrom: postmaster@testadomcidr.example.com
+    result: fail
+  15:
+    host: 192.168.0.1
+    mailfrom: postmaster@testmx.example.com
+    result: pass
+  16:
+    host: 192.168.0.2
+    mailfrom: postmaster@testmx.example.com
+    result: pass
+  17:
+    host: 192.168.0.1
+    mailfrom: postmaster@testmx2.example.com
+    result: pass
+  18:
+    host: 192.168.1.1
+    mailfrom: postmaster@testmx3.example.com
+    result: pass
+  19:
+    host: 192.168.1.2
+    mailfrom: postmaster@testmx3.example.com
+    result: pass
+  20:
+    host: 192.168.2.2
+    mailfrom: postmaster@testmx3.example.com
+    result: fail
+  21:
+    host: 192.168.0.1
+    mailfrom: postmaster@testmx4.example.com
+    result: pass
+  22:
+    host: 192.168.0.2
+    mailfrom: postmaster@testmx4.example.com
+    result: pass
+  23:
+    host: 172.16.0.1
+    mailfrom: postmaster@testmx4.example.com
+    result: pass
+  24:
+    host: 172.16.0.2
+    mailfrom: postmaster@testmx4.example.com
+    result: pass
+  25:
+    host: 127.0.0.1
+    mailfrom: postmaster@testmx4.example.com
+    result: fail
+  26:
+    host: 127.0.0.1
+    mailfrom: postmaster@testptr.example.com
+    result: pass
+  27:
+    host: 192.168.255.254
+    mailfrom: postmaster@testptrother.example.com
+    result: pass
+  28:
+    host: 172.16.0.1
+    mailfrom: postmaster@testptrother.example.com
+    result: fail
+  29:
+    host: 192.168.0.1
+    mailfrom: postmaster@testinclude.example.com
+    result: pass
+  30:
+    host: 10.14.40.1
+    mailfrom: postmaster@testinclude.example.com
+    result: fail
+  31:
+    host: 192.168.255.254
+    mailfrom: postmaster@testnospf.example.com
+    result: none
+  32:
+    host: 192.168.255.254
+    mailfrom: postmaster@testnonexistant.example.com
+    result: none
+  33:
+    host: 192.168.255.254
+    mailfrom: postmaster@testneutral.example.com
+    result: neutral
+  34:
+    host: 192.168.255.254
+    mailfrom: postmaster@testexists.example.com
+    result: pass
+  35:
+    host: 192.168.255.254
+    mailfrom: postmaster@testnonexists.example.com
+    result: fail
+  36:
+    host: 192.168.255.254
+    mailfrom: postmaster@testinvalid.example.com
+    result: permerror
+  37:
+    host: 192.168.255.254
+    mailfrom: postmaster@
+    result: none
+zonedata:
+  test.example.com:
+    - SPF: 'v=spf1 +ip4:127.0.0.0/8 +ip4:172.16.0.0/16 ip4:192.168.0.0/24 +ip6:fe80::/64 -all'
+    - A: '127.0.0.1'
+    - A: '192.168.0.1'
+    - A: 'fe80::'
+  testa.example.com:
+    - SPF: 'v=spf1 +a +a/24 +a:testa2.example.com +a:testa2.example.com/24 -all'
+    - A: '192.168.0.1'
+  testa2.example.com:
+    - A: '172.16.0.1'
+  testmx.example.com:
+    - SPF: 'v=spf1 +mx:testmx2.example.com/24 -all'
+    - MX: [0, 'mail.testmx.example.com']
+    - MX: [1, 'mail2.testmx.example.com']
+  mail.testmx.example.com:
+    - A: '192.168.0.1'
+  mail2.testmx.example.com:
+    - A: '172.16.0.1'
+  testmx2.example.com:
+    - SPF: 'v=spf1 +mx -all'
+    - MX: [0, '192.168.0.1']
+  testmx3.example.com:
+    - SPF: 'v=spf1 +mx/24 -all'
+    - MX: [0, '192.168.1.1']
+  testnospf.example.com:
+    - SPF: ''
+  testneutral.example.com:
+    - SPF: 'v=spf1 +a'
+  test4nocidr.example.com:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  test6nocidr.example.com:
+    - SPF: 'v=spf1 +ip6:fe80:: -all'
+  testadomcidr.example.com:
+    - SPF: 'v=spf1 +a:testa2.example.com/24 -all'
+  testmx4.example.com:
+    - SPF: 'v=spf1 +mx:testmx.example.com/24 -all'
+  testinvalid.example.com:
+    - SPF: 'v=spf1 +hey -all'
+  testexists.example.com:
+    - SPF: 'v=spf1 exists:test.example.com -all'
+  testnonexists.example.com:
+    - SPF: 'v=spf1 exists:thetest.example.com -all'
+  testptr.example.com:
+    - SPF: 'v=spf1 ptr -all'
+    - A: '127.0.0.1'
+  testptrother.example.com:
+    - SPF: 'v=spf1 ptr:otherptr.example.com -all'
+  testinclude.example.com:
+    - SPF: 'v=spf1 include:test.example.com -all'
+  otherptr.example.com:
+    - A: '192.168.255.254'
+  1.0.0.127.in-addr.arpa:
+    - PTR: 'testptr.example.com'
+  254.255.168.192.in-addr.arpa:
+    - PTR: 'otherptr.example.com'

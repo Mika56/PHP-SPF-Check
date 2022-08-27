@@ -1,0 +1,12 @@
+description: Issue 3
+tests:
+  include-infinite-recursion:
+    description: >-
+      Don't infinitely follow includes
+    helo: mail.example.net
+    host: 127.0.0.1
+    mailfrom: postmaster@example.com
+    result: permerror
+zonedata:
+  example.com:
+    - SPF: 'v=spf1 include:domain.com ~all'

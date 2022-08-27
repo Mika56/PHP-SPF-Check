@@ -1,0 +1,2 @@
+- search: "Result is none if checking SPF records only"
+  replace: ">-\n      Result is none if checking SPF records only"

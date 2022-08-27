@@ -1,0 +1,50 @@
+description: Issue 25
+tests:
+  max-requests:
+    helo: mail.example.com
+    host: 127.0.0.1
+    mailfrom: postmaster@e1.example.com
+    result: fail
+  mx-requests-max:
+    helo: mail.example.com
+    host: 127.0.0.1
+    mailfrom: postmaster@e2.example.com
+    result: permerror
+  mx-requests-exceeded:
+    helo: mail.example.com
+    host: 127.0.0.1
+    mailfrom: postmaster@e3.example.com
+    result: permerror
+  ptr-requests-max:
+    helo: mail.example.com
+    host: 127.0.0.1
+    mailfrom: postmaster@e4.example.com
+    result: fail
+  ptr-requests-exceeded:
+    helo: mail.example.com
+    host: 127.0.0.1
+    mailfrom: postmaster@e5.example.com
+    result: permerror
+zonedata:
+  e1.example.com:
+    - SPF: 'v=spf1 a mx a mx a mx a mx a ptr ip4:192.168.0.1 -all'
+    - A: '192.168.0.2'
+    - MX: [10, 'e1.example.com']
+  e2.example.com:
+    - SPF: 'v=spf1 mx mx mx mx mx mx mx mx mx mx ip4:192.168.0.1 -all'
+    - A: '192.168.0.2'
+    - MX: [10, 'e2.example.com']
+    - MX: [20, 'e2.example.com']
+    - MX: [30, 'e2.example.com']
+  e3.example.com:
+    - SPF: 'v=spf1 a mx a mx a mx a mx a ptr ip4:192.168.0.1 -all'
+    - A: '192.168.0.2'
+    - MX: [10, 'e3.example.com']
+    - MX: [20, 'e3.example.com']
+    - MX: [30, 'e3.example.com']
+  e4.example.com:
+    - SPF: 'v=spf1 ptr ptr ptr ptr ptr ptr ptr ptr ptr ptr -all'
+    - A: '192.168.0.2'
+  e5.example.com:
+    - SPF: 'v=spf1 ptr ptr ptr ptr ptr ptr ptr ptr ptr ptr ptr -all'
+    - A: '192.168.0.2'
