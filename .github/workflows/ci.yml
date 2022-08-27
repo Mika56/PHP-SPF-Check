@@ -43,6 +43,7 @@ jobs:
           - 1053:53/udp
   codacy:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) final
