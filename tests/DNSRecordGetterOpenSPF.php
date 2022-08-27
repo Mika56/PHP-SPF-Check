@@ -39,37 +39,6 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
         }
     }
 
-    public function getSPFRecordsForDomain(string $domain): array
-    {
-        $domain     = strtolower($domain);
-        $spfRecords = array();
-        if(!array_key_exists($domain, $this->data)) {
-            return [];
-        }
-        if ($this->data[$domain] == 'TIMEOUT') {
-            throw new DNSLookupException();
-        }
-        $spf = array();
-
-        if (array_key_exists('SPF', $this->data[$domain]) && !array_key_exists('TXT', $this->data[$domain])) {
-            $spf = $this->data[$domain]['SPF'];
-        } elseif (array_key_exists('TXT', $this->data[$domain])) {
-            $spf = $this->data[$domain]['TXT'];
-        }
-        if (!is_array($spf)) {
-            $spf = array($spf);
-        }
-
-        foreach ($spf as $record) {
-            $record = strtolower($record);
-            if ($record == 'v=spf1' || stripos($record, 'v=spf1 ') === 0) {
-                $spfRecords[] = $record;
-            }
-        }
-
-        return $spfRecords;
-    }
-
     public function resolveA(string $domain, $ip4only = false): array
     {
         $domain    = strtolower($domain);
@@ -136,9 +105,20 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
             if ($this->data[$domain] == 'TIMEOUT') {
                 throw new DNSLookupException();
             }
-            if (array_key_exists('TXT', $this->data[$domain])) {
-                return $this->data[$domain]['TXT'];
+
+            $spf = [];
+
+            // Although we're asking for TXT records, a lot of OpenSPF tests uses the deprecated SPF record type
+            if (array_key_exists('SPF', $this->data[$domain]) && !array_key_exists('TXT', $this->data[$domain])) {
+                $spf = $this->data[$domain]['SPF'];
+            } elseif (array_key_exists('TXT', $this->data[$domain])) {
+                $spf = $this->data[$domain]['TXT'];
             }
+            if (!is_array($spf)) {
+                $spf = [$spf];
+            }
+
+            return $spf;
         }
 
         return [];
