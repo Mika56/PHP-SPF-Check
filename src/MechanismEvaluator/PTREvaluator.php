@@ -20,7 +20,7 @@ class PTREvaluator implements EvaluatorInterface
 
         $ptrRecords = $result->getDNSSession()->resolvePTR($query->getIpAddress());
         foreach ($ptrRecords as $ptrRecord) {
-            if(str_ends_with($ptrRecord, $mechanism->getHostname())) {
+            if(str_ends_with(strtolower($ptrRecord), strtolower($mechanism->getHostname()))) {
                 return true;
             }
         }

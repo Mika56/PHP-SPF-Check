@@ -96,11 +96,11 @@ class DNSRecordGetterDirectTest extends TestCase
     {
         $dnsRecordGetter = new DNSRecordGetterDirect($this->dnsServer, $this->dnsServerPort, 3, false);
 
-        $result = $dnsRecordGetter->getSPFRecordsForDomain('test.local.dev');
-        $this->assertCount(1, $result);
+        $result = $dnsRecordGetter->resolveTXT('test.local.dev');
+        $this->assertCount(2, $result);
         $this->assertContains('v=spf1 a -all', $result);
 
-        $result = $dnsRecordGetter->getSPFRecordsForDomain('noexist.local.dev');
+        $result = $dnsRecordGetter->resolveTXT('noexist.local.dev');
         $this->assertEmpty($result);
     }
 

@@ -39,15 +39,17 @@ class SPFCheck
     {
         $result = [];
 
-        $records = $this->DNSRecordGetter->getSPFRecordsForDomain($domainName);
+        $records = $this->DNSRecordGetter->resolveTXT($domainName);
         foreach ($records as $record) {
-            $result[] = new Record($domainName, $record);
+            $txt = strtolower($record);
+            // An SPF record can be empty (no mechanism)
+            if ($txt == 'v=spf1' || str_starts_with($txt, 'v=spf1 ')) {
+                $result[] = new Record($domainName, $record);
+            }
         }
 
         return $result;
     }
-
-    //public function getIPResult(string $ipAddress, string $domainName, ?Result $result = null): Result
 
     public function getResult(Query $query): Result
     {
@@ -57,7 +59,6 @@ class SPFCheck
     private function doGetResult(Query $query, ?Result $result = null): Result
     {
         $domainName = $query->getDomainName();
-        $ipAddress = $query->getIpAddress();
         $result??= new Result(new Session($this->DNSRecordGetter));
 
         if(empty($domainName)) {

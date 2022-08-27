@@ -9,11 +9,6 @@ use Mika56\SPFCheck\Exception\DNSLookupException;
 
 interface DNSRecordGetterInterface
 {
-    /**
-     * @return string[]
-     * @throws DNSLookupException
-     */
-    public function getSPFRecordsForDomain(string $domain): array;
 
     /**
      * @return string[]

@@ -9,32 +9,6 @@ use Mika56\SPFCheck\Exception\DNSLookupException;
 
 class DNSRecordGetter implements DNSRecordGetterInterface
 {
-    /**
-     * @param string $domain The domain to get SPF record
-     * @return string[] The SPF record(s)
-     * @throws DNSLookupException
-     */
-    public function getSPFRecordsForDomain(string $domain): array
-    {
-        $records = dns_get_record($domain, DNS_TXT | DNS_SOA);
-        if (false === $records) {
-            throw new DNSLookupException;
-        }
-
-        $spfRecords = [];
-        foreach ($records as $record) {
-            if ($record['type'] !== 'TXT') {
-                continue;
-            }
-            $txt = strtolower($record['txt']);
-            // An SPF record can be empty (no mechanism)
-            if ($txt == 'v=spf1' || str_starts_with($txt, 'v=spf1 ')) {
-                $spfRecords[] = $txt;
-            }
-        }
-
-        return $spfRecords;
-    }
 
     /**
      * @throws DNSLookupException

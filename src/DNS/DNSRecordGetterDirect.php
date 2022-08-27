@@ -28,32 +28,6 @@ class DNSRecordGetterDirect implements DNSRecordGetterInterface
         $this->tcpFallback = $tcpFallback;
     }
 
-    /**
-     * @param string $domain The domain to get SPF record
-     * @return string[] The SPF record(s)
-     * @throws DNSLookupException
-     */
-    public function getSPFRecordsForDomain(string $domain): array
-    {
-        $records = $this->dns_get_record($domain, "TXT");
-        if (false === $records) {
-            throw new DNSLookupException;
-        }
-
-        $spfRecords = array();
-        foreach ($records as $record) {
-            if ($record['type'] == 'TXT') {
-                $txt = strtolower($record['txt']);
-                // An SPF record can be empty (no mechanism)
-                if ($txt == 'v=spf1' || stripos($txt, 'v=spf1 ') === 0) {
-                    $spfRecords[] = $txt;
-                }
-            }
-        }
-
-        return $spfRecords;
-    }
-
     public function resolveA(string $domain, bool $ip4only = false): array
     {
         $records = $this->dns_get_record($domain, "A");

@@ -26,26 +26,17 @@ class DNSRecordGetterTest extends TestCase
                     'txt'  => 'v=spf1',
                 ],
             ],
-            'example3.com' => [
-                [
-                    'type' => 'TXT',
-                    'txt'  => 'v=spf2',
-                ],
-            ],
         ]);
 
         $dnsRecordGetter = new DNSRecordGetter();
 
-        $result = $dnsRecordGetter->getSPFRecordsForDomain('example.com');
+        $result = $dnsRecordGetter->resolveTXT('example.com');
         $this->assertCount(1, $result);
         $this->assertContains('v=spf1 a', $result);
 
-        $result = $dnsRecordGetter->getSPFRecordsForDomain('example2.com');
+        $result = $dnsRecordGetter->resolveTXT('example2.com');
         $this->assertCount(1, $result);
         $this->assertContains('v=spf1', $result);
-
-        $result = $dnsRecordGetter->getSPFRecordsForDomain('example3.com');
-        $this->assertEmpty($result);
     }
 
     public function testResolveA()
