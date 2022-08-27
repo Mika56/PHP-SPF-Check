@@ -2,6 +2,9 @@ name: CI
 
 on: [push]
 
+env:
+  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -22,11 +25,13 @@ jobs:
           php_extensions: xdebug json
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
-          args: --coverage-text
+          args: --coverage-text --coverage-clover clover.xml
         env:
           XDEBUG_MODE: coverage
           DNS_SERVER_PORT: 1053 # Port 53 is blocked by GitHub
           SYMFONY_DEPRECATIONS_HELPER: "ignoreFile=./tests/baseline-ignore"
+      - run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l PHP -r clover.xml --partial
     services:
       powerdns:
         image: raspberrypython/powerdns-sqlite3:latest
@@ -36,3 +41,8 @@ jobs:
           - 80:80
           - 1053:53/tcp
           - 1053:53/udp
+  codacy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) final
