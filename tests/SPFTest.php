@@ -45,7 +45,7 @@ final class SPFTest extends TestCase
         }
     }
 
-    protected function loadTestCases(): array
+    public function loadTestCases(): array
     {
         $tests = glob(__DIR__.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
         $testCases = [];
