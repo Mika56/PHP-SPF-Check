@@ -31,10 +31,7 @@ class ExistsEvaluator implements EvaluatorInterface
         catch (DNSLookupException $e) {
             throw new TempErrorException('', 0, $e);
         }
-        foreach($records as $record) {
-            return true;
-        }
 
-        return false;
+        return !empty($records);
     }
 }

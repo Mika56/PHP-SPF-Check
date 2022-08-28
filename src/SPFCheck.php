@@ -97,7 +97,7 @@ class SPFCheck
         $result->setRecord($record);
         foreach ($record->getTerms() as $term) {
             if($term instanceof AbstractMechanism) {
-                $evaluator = SPFCheck::getEvaluatorFor($term);
+                $evaluator = self::getEvaluatorFor($term);
                 try {
                     if ($evaluator === IncludeEvaluator::class) {
                         // Include evaluator needs access to SPFCheck::doGetResult
