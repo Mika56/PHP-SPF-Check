@@ -13,9 +13,8 @@
         }
     ],
     "require": {
-        "symfony/http-foundation": "2.8.* || ^3.0 || ^4.0 || ^5.0 || ^6.0",
         "php": ">=7.4",
-        "ext-json": "*",
+        "symfony/http-foundation": "2.8.* || ^3.0 || ^4.0 || ^5.0 || ^6.0",
         "symfony/polyfill-php80": "^1.26"
     },
     "require-dev": {

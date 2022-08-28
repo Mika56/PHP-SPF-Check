@@ -22,7 +22,7 @@ jobs:
         with:
           version: 9 # PHPUnit version
           php_version: ${{ matrix.php_version }}
-          php_extensions: xdebug json
+          php_extensions: xdebug
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
           args: --coverage-text --coverage-clover clover.xml
