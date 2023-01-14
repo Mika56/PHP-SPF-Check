@@ -46,9 +46,6 @@ class DNSRecordGetter implements DNSRecordGetterInterface
         $addresses = [];
 
         foreach ($records as $record) {
-            if (empty($record['target'])) {
-                continue;
-            }
             if ($record['type'] === "MX") {
                 $addresses[] = $record['target'];
             }
