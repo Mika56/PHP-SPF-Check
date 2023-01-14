@@ -39,6 +39,10 @@ final class Session
         $records = $this->DNSRecordGetter->resolveMx($domainName);
         foreach ($records as $record) {
             $this->countMXRequest();
+            // MX records shouldn't be empty, best practice is to ignore them when they are
+            if(empty($record)) {
+                continue;
+            }
             // Although not recommended, an MX record can be an IP address
             if(false !== filter_var($record, FILTER_VALIDATE_IP)) {
                 yield [$record];

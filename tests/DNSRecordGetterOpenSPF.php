@@ -43,6 +43,9 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
     {
         $domain    = strtolower($domain);
         $addresses = array();
+        if(empty($domain)) {
+            throw new DNSLookupException();
+        }
         if (array_key_exists($domain, $this->data)) {
             if ($this->data[$domain] == 'TIMEOUT') {
                 throw new DNSLookupException();
