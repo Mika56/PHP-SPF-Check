@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: [push, pull_request]
 
 env:
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -32,9 +32,11 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: "ignoreFile=./tests/baseline-ignore"
       - run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l PHP -r clover.xml --partial
+        if: github.event_name == 'push'
   codacy:
     runs-on: ubuntu-latest
     needs: test
+    if: github.event_name == 'push'
     steps:
       - run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) final
