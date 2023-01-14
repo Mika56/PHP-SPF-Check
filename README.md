@@ -44,5 +44,5 @@ var_dump($checker->getIPStringResult('127.0.0.1', 'test.com'));
 
 Return value is one of `Result::PASS`, `Result::FAIL`, `Result::SOFTFAIL`, `Result::NEUTRAL`, `Result::NONE`, `Result::PERMERROR`, `Result::TEMPERROR`
 
-If you want to get more details about the check, you can use `SPFCheck::getIPResult(string $ipAddress, string $domainName): Result` which will return a 
+If you want to get more details about the check, you can use `SPFCheck::getResult(string $ipAddress, string $domainName): Result` which will return a 
 `Result` object with more details about the check.
