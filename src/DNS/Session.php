@@ -13,10 +13,16 @@ final class Session
     protected int $requestCount = 0;
     protected int $requestMXCount = 0;
     protected int $requestPTRCount = 0;
+    private int $maxRequests;
+    private int $maxMXRequests;
+    private int $maxPTRRequests;
 
-    public function __construct(DNSRecordGetterInterface $DNSRecordGetter)
+    public function __construct(DNSRecordGetterInterface $DNSRecordGetter, int $maxRequests = 10, int $maxMXRequests = 10, int $maxPTRRequests = 10)
     {
         $this->DNSRecordGetter = $DNSRecordGetter;
+        $this->maxRequests = $maxRequests;
+        $this->maxMXRequests = $maxMXRequests;
+        $this->maxPTRRequests = $maxPTRRequests;
     }
 
     /**
@@ -83,6 +89,21 @@ final class Session
         return $this->DNSRecordGetter->resolveTXT($hostname);
     }
 
+    public function getRequestCount(): int
+    {
+        return $this->requestCount;
+    }
+
+    public function getRequestMXCount(): int
+    {
+        return $this->requestMXCount;
+    }
+
+    public function getRequestPTRCount(): int
+    {
+        return $this->requestPTRCount;
+    }
+
     /**
      * @throws DNSLookupLimitReachedException
      */
@@ -96,7 +117,7 @@ final class Session
      */
     private function countRequest(): void
     {
-        if ($this->requestCount++ == 10) {
+        if ($this->requestCount++ == $this->maxRequests) {
             throw new DNSLookupLimitReachedException();
         }
     }
@@ -106,7 +127,7 @@ final class Session
      */
     private function countMXRequest(): void
     {
-        if (++$this->requestMXCount > 10) {
+        if (++$this->requestMXCount > $this->maxMXRequests) {
             throw new DNSLookupLimitReachedException();
         }
     }
@@ -116,7 +137,7 @@ final class Session
      */
     private function countPTRRequest(): void
     {
-        if (++$this->requestPTRCount > 10) {
+        if (++$this->requestPTRCount > $this->maxPTRRequests) {
             throw new DNSLookupLimitReachedException();
         }
     }

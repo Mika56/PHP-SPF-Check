@@ -16,7 +16,6 @@ use Mika56\SPFCheck\MechanismEvaluator\{AEvaluator, AllEvaluator, ExistsEvaluato
 use Mika56\SPFCheck\Model\Query;
 use Mika56\SPFCheck\Model\Record;
 use Mika56\SPFCheck\Model\Result;
-use Mika56\SPFCheck\Modifier\Explanation;
 use Mika56\SPFCheck\Modifier\Redirect;
 use const true;
 
@@ -24,10 +23,16 @@ class SPFCheck
 {
 
     protected DNSRecordGetterInterface $DNSRecordGetter;
+    private int $maxRequests;
+    private int $maxMXRequests;
+    private int $maxPTRRequests;
 
-    public function __construct(DNSRecordGetterInterface $DNSRecordGetter)
+    public function __construct(DNSRecordGetterInterface $DNSRecordGetter, int $maxRequests = 10, int $maxMXRequests = 10, int $maxPTRRequests = 10)
     {
         $this->DNSRecordGetter = $DNSRecordGetter;
+        $this->maxRequests = $maxRequests;
+        $this->maxMXRequests = $maxMXRequests;
+        $this->maxPTRRequests = $maxPTRRequests;
     }
 
     /**
@@ -59,7 +64,8 @@ class SPFCheck
     private function doGetResult(Query $query, ?Result $result = null): Result
     {
         $domainName = $query->getDomainName();
-        $result??= new Result(new Session($this->DNSRecordGetter));
+        $isInnerCheck = $result !== null;
+        $result??= new Result(new Session($this->DNSRecordGetter, $this->maxRequests, $this->maxMXRequests, $this->maxPTRRequests));
 
         if(empty($domainName)) {
             $result->setResult(Result::NONE);
@@ -94,7 +100,9 @@ class SPFCheck
         }
 
         $redirect = null;
-        $result->setRecord($record);
+        if(!$isInnerCheck) {
+            $result->setRecord($record);
+        }
         foreach ($record->getTerms() as $term) {
             if($term instanceof AbstractMechanism) {
                 $evaluator = self::getEvaluatorFor($term);
@@ -116,6 +124,7 @@ class SPFCheck
                 $result->addStep($term, $matches);
                 if($matches) {
                     if($record->hasExplanation()) {
+                        unset($explanation);
                         try {
                             $explanationHost = MacroUtils::expandMacro($record->getExplanation()->getHostname(), $query, $result->getDNSSession(), true);
                             $explanationHost = MacroUtils::truncateDomainName($explanationHost);
@@ -123,8 +132,8 @@ class SPFCheck
                             if(count($explanationTXT) === 1) {
                                 $explanation = MacroUtils::expandMacro($explanationTXT[0], $query, $result->getDNSSession(), true);
                                 // Only allow ASCII explanations
-                                if(1===preg_match('`^[[:ascii:]]*$`', $explanation)) {
-                                    $result->setExplanation($explanation);
+                                if(1!==preg_match('`^[[:ascii:]]*$`', $explanation)) {
+                                    unset($explanation);
                                 }
                             }
                         }
@@ -133,7 +142,7 @@ class SPFCheck
                             or if there are syntax errors in the explanation string then proceed as if no exp modifier was given. */
                         }
                     }
-                    $result->setShortResult($term->getQualifier());
+                    $result->setShortResult($term->getQualifier(), $explanation ?? null);
 
                     return $result;
                 }

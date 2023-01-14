@@ -34,7 +34,13 @@ class Result
     private Session $DNSSession;
     private string $result;
     private ?string $explanation = self::DEFAULT_RESULT; // If no "exp" modifier is present, then either a default explanation string or an empty explanation string may be returned.
-    private Record $record;
+    private ?Record $record = null;
+    protected int $requestCount = 0;
+    protected int $requestMXCount = 0;
+    protected int $requestPTRCount = 0;
+    /**
+     * @var array{array{0: Term, 1: ?bool}}
+     */
     private array $steps = [];
     private int $voidLookups = 0;
 
@@ -43,14 +49,17 @@ class Result
         $this->DNSSession = $DNSSession;
     }
 
-    /**
-     * @internal
-     */
-    public function setRecord(Record $record): self
+    public function getRecord(): ?Record
     {
-        $this->record = $record;
+        return $this->record;
+    }
 
-        return $this;
+    /**
+     * @return array{array{0: Term, 1: ?bool}}
+     */
+    public function getSteps(): array
+    {
+        return $this->steps;
     }
 
     public function hasResult(): bool
@@ -90,13 +99,46 @@ class Result
         return $this->explanation;
     }
 
+    public function getRequestCount(): int
+    {
+        return $this->requestCount;
+    }
+
+    public function getRequestMXCount(): int
+    {
+        return $this->requestMXCount;
+    }
+
+    public function getRequestPTRCount(): int
+    {
+        return $this->requestPTRCount;
+    }
+
+    public function getVoidLookups(): int
+    {
+        return $this->voidLookups;
+    }
+
+    /**
+     * @internal
+     */
+    public function setRecord(Record $record): self
+    {
+        $this->record = $record;
+
+        return $this;
+    }
+
     /**
      * @internal
      */
     public function setResult(string $result, ?string $explanation = null): self
     {
         $this->result      = $result;
-        $this->explanation = $explanation;
+        if($explanation) {
+            $this->explanation = $explanation;
+        }
+        $this->setDNSLookups();
 
         return $this;
     }
@@ -104,45 +146,35 @@ class Result
     /**
      * @internal
      */
-    public function setShortResult(string $result): self
+    public function setShortResult(string $result, ?string $explanation = null): self
     {
         switch($result) {
             case '+':
-                $this->result = self::PASS;
+                $result = self::PASS;
                 break;
             case '-':
-                $this->result = self::FAIL;
+                $result = self::FAIL;
                 break;
             case '~':
-                $this->result = self::SOFTFAIL;
+                $result = self::SOFTFAIL;
                 break;
             case '?':
-                $this->result = self::NEUTRAL;
+                $result = self::NEUTRAL;
                 break;
             case 'NO':
-                $this->result = self::NONE;
+                $result = self::NONE;
                 break;
             case 'TE':
-                $this->result = self::TEMPERROR;
+                $result = self::TEMPERROR;
                 break;
             case 'PE':
-                $this->result = self::PERMERROR;
+                $result = self::PERMERROR;
                 break;
             default:
                 throw new \InvalidArgumentException('Invalid short result '.$result);
         }
 
-        return $this;
-    }
-
-    /**
-     * @internal
-     */
-    public function setExplanation(?string $explanation): self
-    {
-        $this->explanation = $explanation;
-
-        return $this;
+        return $this->setResult($result, $explanation);
     }
 
     /**
@@ -172,6 +204,13 @@ class Result
         if (++$this->voidLookups > 2) {
             throw new PermErrorException();
         }
+    }
+
+    private function setDNSLookups()
+    {
+        $this->requestCount = $this->DNSSession->getRequestCount();
+        $this->requestMXCount = $this->DNSSession->getRequestMXCount();
+        $this->requestPTRCount = $this->DNSSession->getRequestPTRCount();
     }
 
 }
