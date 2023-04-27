@@ -55,7 +55,7 @@ class Record
             }
             $cidr4 = array_key_exists('cidr4', $matches) && $matches['cidr4'] !== '' ? intval($matches['cidr4']) : null;
             $cidr6 = array_key_exists('cidr6', $matches) && $matches['cidr6'] !== '' ? intval($matches['cidr6']) : null;
-            switch($matches['term']) {
+            switch(strtolower($matches['term'])) {
                 case Mechanism::ALL:
                     yield new All($term, $matches['qualifier']);
                     break;

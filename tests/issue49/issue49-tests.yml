@@ -1,0 +1,16 @@
+description: Issue 49
+tests:
+  include-permerror:
+    description: >-
+      Accept different upper and lower case mechanisms
+    helo: mail.example.net
+    host: 127.0.0.1
+    mailfrom: postmaster@example.com
+    result: pass
+zonedata:
+  example.com:
+    - SPF: 'v=spf1 iP4:127.0.0.1 ~aLL'
+  example.net:
+    - SPF: 'v=spf1 +All'
+  example.org:
+    - SPF: 'v=spf1 +IP4:127.0.0.1 -ALL'
