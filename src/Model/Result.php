@@ -76,19 +76,19 @@ class Result
     {
         switch($this->result) {
             case self::PASS:
-                return '+';
+                return self::SHORT_PASS;
             case self::FAIL:
-                return '-';
+                return self::SHORT_FAIL;
             case self::SOFTFAIL:
-                return '~';
+                return self::SHORT_SOFTFAIL;
             case self::NEUTRAL:
-                return '?';
+                return self::SHORT_NEUTRAL;
             case self::NONE:
-                return 'NO';
+                return self::SHORT_NONE;
             case self::TEMPERROR:
-                return 'TE';
+                return self::SHORT_TEMPERROR;
             case self::PERMERROR:
-                return 'PE';
+                return self::SHORT_PERMERROR;
         }
 
         throw new \LogicException('Invalid result '.$this->result);
