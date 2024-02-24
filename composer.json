@@ -35,5 +35,6 @@
             "Mika56\\SPFCheck\\Test\\": "tests"
         }
     },
-    "license": "MIT"
+    "license": "MIT",
+    "keywords": ["spf", "email"]
 }
