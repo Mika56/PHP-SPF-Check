@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php_version: [7.4, 8.0, 8.1, 8.2]
+        php_version: [7.4, 8.0, 8.1, 8.2, 8.3]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Composer dependencies
