@@ -4,8 +4,8 @@
 [![Latest Stable Version](https://poser.pugx.org/mika56/spfcheck/v/stable)](https://packagist.org/packages/mika56/spfcheck)
 [![Total Downloads](https://poser.pugx.org/mika56/spfcheck/downloads)](https://packagist.org/packages/mika56/spfcheck)
 [![License](https://poser.pugx.org/mika56/spfcheck/license)](https://packagist.org/packages/mika56/spfcheck)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/04f2a3a221c143089126d70f235a54cd)](https://www.codacy.com/gh/Mika56/PHP-SPF-Check/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Mika56/PHP-SPF-Check&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/04f2a3a221c143089126d70f235a54cd)](https://www.codacy.com/gh/Mika56/PHP-SPF-Check/dashboard?utm_source=github.com&utm_medium=referral&utm_content=Mika56/PHP-SPF-Check&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/04f2a3a221c143089126d70f235a54cd)](https://app.codacy.com/gh/Mika56/PHP-SPF-Check/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Mika56/PHP-SPF-Check&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/04f2a3a221c143089126d70f235a54cd)](https://app.codacy.com/gh/Mika56/PHP-SPF-Check/dashboard?utm_source=github.com&utm_medium=referral&utm_content=Mika56/PHP-SPF-Check&utm_campaign=Badge_Coverage)
 
 Simple library to check an IP address against a domain's [SPF](http://www.openspf.org/) record
 
