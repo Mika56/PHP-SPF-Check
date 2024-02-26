@@ -14,13 +14,13 @@ class DNSRecordGetterTest extends TestCase
     public function testGetSPFRecordForDomain()
     {
         DnsMock::withMockedHosts([
-            'example.com'  => [
+            'example.com.'  => [
                 [
                     'type' => 'TXT',
                     'txt'  => 'v=spf1 a',
                 ],
             ],
-            'example2.com' => [
+            'example2.com.' => [
                 [
                     'type' => 'TXT',
                     'txt'  => 'v=spf1',
@@ -42,7 +42,7 @@ class DNSRecordGetterTest extends TestCase
     public function testResolveA()
     {
         DnsMock::withMockedHosts([
-            'example.com' => [
+            'example.com.' => [
                 [
                     'type' => 'A',
                     'ip'   => '1.2.3.4',
@@ -68,14 +68,14 @@ class DNSRecordGetterTest extends TestCase
     public function testResolveMx()
     {
         DnsMock::withMockedHosts([
-            'example.com'  => [
+            'example.com.'  => [
                 [
                     'type'   => 'MX',
                     'pri'    => 10,
                     'target' => 'mail.example.com',
                 ],
             ],
-            'example2.com' => [],
+            'example2.com.' => [],
         ]);
 
         $dnsRecordGetter = new DNSRecordGetter();
@@ -91,7 +91,7 @@ class DNSRecordGetterTest extends TestCase
     public function testResolvePtrIpv4()
     {
         DnsMock::withMockedHosts([
-            '1.0.0.127.in-addr.arpa' => [
+            '1.0.0.127.in-addr.arpa.' => [
                 [
                     'type'   => 'PTR',
                     'target' => 'example.com',
@@ -109,7 +109,7 @@ class DNSRecordGetterTest extends TestCase
     public function testResolvePtrIpv6()
     {
         DnsMock::withMockedHosts([
-            '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.e.f.ip6.arpa' => [
+            '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.e.f.ip6.arpa.' => [
                 [
                     'type'   => 'PTR',
                     'target' => 'example.com',
