@@ -15,7 +15,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
      */
     public function resolveA(string $domain, bool $ip4only = false): array
     {
-        $records = dns_get_record($domain, $ip4only ? DNS_A : (DNS_A | DNS_AAAA));
+        $records = dns_get_record($this->getFQDN($domain), $ip4only ? DNS_A : (DNS_A | DNS_AAAA));
         if (false === $records) {
             throw new DNSLookupException;
         }
@@ -38,7 +38,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
      */
     public function resolveMx(string $domain): array
     {
-        $records = dns_get_record($domain, DNS_MX);
+        $records = dns_get_record($this->getFQDN($domain), DNS_MX);
         if (false === $records) {
             throw new DNSLookupException;
         }
@@ -58,12 +58,12 @@ class DNSRecordGetter implements DNSRecordGetterInterface
     {
         if (stripos($ipAddress, '.') !== false) {
             // IPv4
-            $revIp = implode('.', array_reverse(explode('.', $ipAddress))).'.in-addr.arpa';
+            $revIp = implode('.', array_reverse(explode('.', $ipAddress))).'.in-addr.arpa.';
         } else {
             $literal = implode(':', array_map(function ($b) {
                 return sprintf('%04x', $b);
             }, unpack('n*', inet_pton($ipAddress))));
-            $revIp   = strtolower(implode('.', array_reverse(str_split(str_replace(':', '', $literal))))).'.ip6.arpa';
+            $revIp   = strtolower(implode('.', array_reverse(str_split(str_replace(':', '', $literal))))).'.ip6.arpa.';
         }
 
         return array_map(function ($e) {
@@ -73,7 +73,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
     public function resolveTXT(string $domain): array
     {
-        $records = dns_get_record($domain, DNS_TXT);
+        $records = dns_get_record($this->getFQDN($domain), DNS_TXT);
         if (false === $records) {
             throw new DNSLookupException;
         }
@@ -87,5 +87,14 @@ class DNSRecordGetter implements DNSRecordGetterInterface
         }
 
         return $texts;
+    }
+
+    protected function getFQDN(string $domain): string
+    {
+        if (!str_ends_with($domain, '.')) {
+            $domain .= '.';
+        }
+
+        return $domain;
     }
 }
