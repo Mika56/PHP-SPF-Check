@@ -15,7 +15,7 @@ use Mika56\SPFCheck\Model\Result;
 class IncludeEvaluator implements EvaluatorInterface
 {
 
-    public static function matches(AbstractMechanism $mechanism, Query $query, Result $result, callable $doGetResult = null): bool
+    public static function matches(AbstractMechanism $mechanism, Query $query, Result $result, ?callable $doGetResult = null): bool
     {
         if(!$mechanism instanceof IncludeMechanism) {
             throw new \LogicException();
