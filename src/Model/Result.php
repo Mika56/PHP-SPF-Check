@@ -185,8 +185,6 @@ class Result
     {
         $this->steps[] = [$term, $matches];
 
-        $this->setDNSLookups();
-
         return $this;
     }
 

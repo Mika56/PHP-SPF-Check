@@ -1,10 +1,20 @@
 description: PR 56 - Allow all SPF checks to complete without returning early on match
 tests:
-  record-with-too-many-lookups:
+  too-many-lookups:
     helo: mail.example.com
     host: 127.0.0.1
     mailfrom: postmaster@example.com
     result: permerror
+    constructorArgs:
+      maxRequests: 20
+      maxMXRequests: 10
+      maxPTRRequests: 10
+      returnImmediatelyOnMatch: false
+  no-ip-match:
+    helo: mail.example.com
+    host: 127.0.0.2
+    mailfrom: postmaster@example.org
+    result: fail
     constructorArgs:
       maxRequests: 20
       maxMXRequests: 10
@@ -26,7 +36,7 @@ zonedata:
   spf2.example.org:
     - SPF: 'v=spf1 include:eu_spf2.example.org include:us_spf2.example.org -all'
   eu_spf1.example.net:
-    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+    - SPF: 'v=spf1 +ip4:192.168.0.1 -all'
   us_spf1.example.net:
     - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
   eu_spf2.example.net:
