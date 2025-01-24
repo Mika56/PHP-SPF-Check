@@ -125,7 +125,6 @@ class SPFCheck
                     return $result;
                 }
                 $result->addStep($term, $matches);
-                $result->setDNSLookups();
                 if($matches) {
                     if($record->hasExplanation()) {
                         unset($explanation);

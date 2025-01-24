@@ -185,6 +185,8 @@ class Result
     {
         $this->steps[] = [$term, $matches];
 
+        $this->setDNSLookups();
+
         return $this;
     }
 
@@ -207,7 +209,7 @@ class Result
         }
     }
 
-    public function setDNSLookups()
+    private function setDNSLookups()
     {
         $this->requestCount = $this->DNSSession->getRequestCount();
         $this->requestMXCount = $this->DNSSession->getRequestMXCount();
