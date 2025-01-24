@@ -207,7 +207,7 @@ class Result
         }
     }
 
-    private function setDNSLookups()
+    public function setDNSLookups()
     {
         $this->requestCount = $this->DNSSession->getRequestCount();
         $this->requestMXCount = $this->DNSSession->getRequestMXCount();

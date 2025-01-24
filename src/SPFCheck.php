@@ -125,6 +125,7 @@ class SPFCheck
                     return $result;
                 }
                 $result->addStep($term, $matches);
+                $result->setDNSLookups();
                 if($matches) {
                     if($record->hasExplanation()) {
                         unset($explanation);
@@ -145,7 +146,10 @@ class SPFCheck
                             or if there are syntax errors in the explanation string then proceed as if no exp modifier was given. */
                         }
                     }
-                    $result->setShortResult($term->getQualifier(), $explanation ?? null);
+
+                    if (!$result->hasResult()) {
+                        $result->setShortResult($term->getQualifier(), $explanation ?? null);
+                    }
 
                     if ($this->returnImmediatelyOnMatch) {
                         return $result;
@@ -192,7 +196,9 @@ class SPFCheck
             return $result;
         }
 
-        $result->setResult(Result::NEUTRAL);
+        if (!$result->hasResult()) {
+            $result->setResult(Result::NEUTRAL);
+        }
 
         return $result;
     }
