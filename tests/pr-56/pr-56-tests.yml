@@ -1,0 +1,43 @@
+description: PR 56 - Allow all SPF checks to complete without returning early on match
+tests:
+  record-with-too-many-lookups:
+    helo: mail.example.com
+    host: 127.0.0.1
+    mailfrom: postmaster@example.com
+    result: permerror
+    constructorArgs:
+      maxRequests: 20
+      maxMXRequests: 10
+      maxPTRRequests: 10
+      returnImmediatelyOnMatch: false
+zonedata:
+  example.com:
+    - SPF: 'v=spf1 include:example.net include:example.org -all'
+  example.net:
+    - SPF: 'v=spf1 include:spf1.example.net include:spf2.example.net -all'
+  example.org:
+    - SPF: 'v=spf1 include:spf1.example.org include:spf2.example.org -all'
+  spf1.example.net:
+    - SPF: 'v=spf1 include:eu_spf1.example.net include:us_spf1.example.net -all'
+  spf2.example.net:
+    - SPF: 'v=spf1 include:eu_spf2.example.net include:us_spf2.example.net -all'
+  spf1.example.org:
+    - SPF: 'v=spf1 include:eu_spf1.example.org include:us_spf1.example.org -all'
+  spf2.example.org:
+    - SPF: 'v=spf1 include:eu_spf2.example.org include:us_spf2.example.org -all'
+  eu_spf1.example.net:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  us_spf1.example.net:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  eu_spf2.example.net:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  us_spf2.example.net:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  eu_spf1.example.org:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  us_spf1.example.org:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  eu_spf2.example.org:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'
+  us_spf2.example.org:
+    - SPF: 'v=spf1 +ip4:127.0.0.1 -all'

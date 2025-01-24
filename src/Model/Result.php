@@ -30,6 +30,7 @@ class Result
     public const DOMAIN_HAS_MORE_THAN_ONE_SPF_RECORD = 'MoreThanOneSPFRecord';
     public const DOMAIN_SPF_RECORD_INVALID = 'SPFRecordInvalid';
     public const REDIRECT_RESULTED_IN_NONE = 'RedirectResultedInNone';
+    public const TOO_MANY_SPF_LOOKUPS = 'TooManySPFLookups';
 
     private Session $DNSSession;
     private string $result;

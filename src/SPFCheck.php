@@ -21,18 +21,21 @@ use const true;
 
 class SPFCheck
 {
+    protected const MAX_SPF_LOOKUPS = 10;
 
     protected DNSRecordGetterInterface $DNSRecordGetter;
     private int $maxRequests;
     private int $maxMXRequests;
     private int $maxPTRRequests;
+    private bool $returnImmediatelyOnMatch;
 
-    public function __construct(DNSRecordGetterInterface $DNSRecordGetter, int $maxRequests = 10, int $maxMXRequests = 10, int $maxPTRRequests = 10)
+    public function __construct(DNSRecordGetterInterface $DNSRecordGetter, int $maxRequests = 10, int $maxMXRequests = 10, int $maxPTRRequests = 10, bool $returnImmediatelyOnMatch = true)
     {
         $this->DNSRecordGetter = $DNSRecordGetter;
         $this->maxRequests = $maxRequests;
         $this->maxMXRequests = $maxMXRequests;
         $this->maxPTRRequests = $maxPTRRequests;
+        $this->returnImmediatelyOnMatch = $returnImmediatelyOnMatch;
     }
 
     /**
@@ -144,7 +147,9 @@ class SPFCheck
                     }
                     $result->setShortResult($term->getQualifier(), $explanation ?? null);
 
-                    return $result;
+                    if ($this->returnImmediatelyOnMatch) {
+                        return $result;
+                    }
                 }
             }
             elseif($term instanceof Redirect) {
@@ -178,6 +183,13 @@ class SPFCheck
                     return $result;
                 }
             }
+        }
+
+        // Have we performed more than the maximum number of SPF lookups?
+        if(!$isInnerCheck && $result->getRequestCount() > self::MAX_SPF_LOOKUPS) {
+            $result->setResult(Result::PERMERROR, Result::TOO_MANY_SPF_LOOKUPS);
+
+            return $result;
         }
 
         $result->setResult(Result::NEUTRAL);

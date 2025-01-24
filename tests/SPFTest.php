@@ -18,9 +18,9 @@ final class SPFTest extends TestCase
     /**
      * @dataProvider loadTestCases
      */
-    public function testCases($ipAddress, $domain, DNSRecordGetterInterface $dnsData, $expectedResult, ?string $explanation, ?string $helo = null, ?string $sender = null)
+    public function testCases($ipAddress, $domain, DNSRecordGetterInterface $dnsData, $expectedResult, ?string $explanation, ?string $helo = null, ?string $sender = null, array $constructorArgs = [])
     {
-        $spfCheck = new SPFCheck($dnsData);
+        $spfCheck = new SPFCheck($dnsData, ...$constructorArgs);
         $result = $spfCheck->getResult(new Query($ipAddress, $domain, $helo, $sender));
 
         try {
@@ -100,6 +100,7 @@ final class SPFTest extends TestCase
                         $test['explanation'] ?? null,
                         $test['helo'] ?? null,
                         $test['mailfrom'] ?? null,
+                        $test['constructorArgs'] ?? [],
                 ];
             }
         }
