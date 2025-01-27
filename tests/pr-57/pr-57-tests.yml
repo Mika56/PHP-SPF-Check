@@ -1,4 +1,4 @@
-description: PR 56 - Allow all SPF checks to complete without returning early on match
+description: PR 57 - Allow all SPF checks to complete without returning early on match
 tests:
   too-many-lookups:
     helo: mail.example.com
