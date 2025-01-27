@@ -21,7 +21,7 @@ use const true;
 
 class SPFCheck
 {
-    protected const MAX_SPF_LOOKUPS = 10;
+    protected const MAX_DNS_LOOKUPS = 10;
 
     protected DNSRecordGetterInterface $DNSRecordGetter;
     private int $maxRequests;
@@ -199,9 +199,9 @@ class SPFCheck
             }
         }
 
-        // Have we performed more than the maximum number of SPF lookups?
-        if(!$isInnerCheck && $result->getRequestCount() > self::MAX_SPF_LOOKUPS) {
-            $result->setResult(Result::PERMERROR, Result::TOO_MANY_SPF_LOOKUPS);
+        // Have we performed more than the maximum number of DNS lookups?
+        if(!$isInnerCheck && $result->getRequestCount() > self::MAX_DNS_LOOKUPS) {
+            $result->setResult(Result::PERMERROR, Result::TOO_MANY_DNS_LOOKUPS);
 
             return $result;
         }
