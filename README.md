@@ -46,3 +46,26 @@ Return value is one of `Result::SHORT_PASS`, `Result::SHORT_FAIL`, `Result::SHOR
 `Result::SHORT_TEMPERROR`
 
 If you want to get more details about the check, you can use `SPFCheck::getResult(Query $query): Result` which will return a `Result` object with more details about the check.
+
+### Continuing checks after a match or a failure is detected
+
+There are some cases where you may wish to check all the mechanisms in an SPF record, even after a match or a failure is detected; for example to determine if the SPF record has too many `include:` statements (SPF has a hard limit of 10 DNS lookups). To do this, you can provide the `$stopOnMatchOrError` constructor argument for SPFCheck:
+
+```php
+use Mika56\SPFCheck\DNS\DNSRecordGetter;
+use Mika56\SPFCheck\SPFCheck;
+use Mika56\SPFCheck\Model\Query;
+
+// Do not stop on match or error
+$stopOnMatchOrError = false;
+
+$checker = new SPFCheck(
+    new DNSRecordGetter(),
+    15, // Maximum number of DNS lookups before SPFCheck will stop
+    10, // Maximum MX requests
+    10, // Maximum PTR requests
+    $stopOnMatchOrError,
+);
+
+$result = $checker->getResult(new Query('127.0.0.1', 'test.com'));
+```

@@ -27,15 +27,15 @@ class SPFCheck
     private int $maxRequests;
     private int $maxMXRequests;
     private int $maxPTRRequests;
-    private bool $returnImmediatelyOnMatch;
+    private bool $stopOnMatchOrError;
 
-    public function __construct(DNSRecordGetterInterface $DNSRecordGetter, int $maxRequests = 10, int $maxMXRequests = 10, int $maxPTRRequests = 10, bool $returnImmediatelyOnMatch = true)
+    public function __construct(DNSRecordGetterInterface $DNSRecordGetter, int $maxRequests = 10, int $maxMXRequests = 10, int $maxPTRRequests = 10, bool $stopOnMatchOrError = true)
     {
         $this->DNSRecordGetter = $DNSRecordGetter;
         $this->maxRequests = $maxRequests;
         $this->maxMXRequests = $maxMXRequests;
         $this->maxPTRRequests = $maxPTRRequests;
-        $this->returnImmediatelyOnMatch = $returnImmediatelyOnMatch;
+        $this->stopOnMatchOrError = $stopOnMatchOrError;
     }
 
     /**
@@ -146,23 +146,24 @@ class SPFCheck
                         }
                     }
 
-                    if ($this->returnImmediatelyOnMatch) {
+                    if ($this->stopOnMatchOrError) {
                         $result->setShortResult($term->getQualifier(), $explanation ?? null);
                         return $result;
+                    }
+
+                    if ($isInnerCheck) {
+                        // Don't record failure for inner checks. Set result if it is a PASS
+                        // @see https://datatracker.ietf.org/doc/html/rfc7208#section-5.2
+                        if ($term->getQualifier() === '+') {
+                            $result->setShortResult($term->getQualifier(), $explanation ?? null);
+                        }
                     } else {
-                        if ($isInnerCheck) {
-                            // Don't record failure for inner checks. Set result if it is a PASS
-                            // @see https://datatracker.ietf.org/doc/html/rfc7208#section-5.2
-                            if ($term->getQualifier() === '+') {
-                                $result->setShortResult($term->getQualifier(), $explanation ?? null);
-                            }
-                        } else {
-                            // Allow setting the result if it's empty, or if it has not already been set to PASS
-                            if (!$result->hasResult() || $result->getShortResult() !== '+') {
-                                $result->setShortResult($term->getQualifier(), $explanation ?? null);
-                            }
+                        // Allow setting the result if it's empty, or if it has not already been set to PASS
+                        if (!$result->hasResult() || $result->getShortResult() !== '+') {
+                            $result->setShortResult($term->getQualifier(), $explanation ?? null);
                         }
                     }
+
                 }
             }
             elseif($term instanceof Redirect) {
