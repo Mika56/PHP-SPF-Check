@@ -151,19 +151,16 @@ class SPFCheck
                         return $result;
                     }
 
-                    if ($isInnerCheck) {
-                        // Don't record failure for inner checks. Set result if it is a PASS
-                        // @see https://datatracker.ietf.org/doc/html/rfc7208#section-5.2
-                        if ($term->getQualifier() === '+') {
-                            $result->setShortResult($term->getQualifier(), $explanation ?? null);
-                        }
-                    } else {
-                        // Allow setting the result if it's empty, or if it has not already been set to PASS
-                        if (!$result->hasResult() || $result->getShortResult() !== '+') {
-                            $result->setShortResult($term->getQualifier(), $explanation ?? null);
-                        }
+                    // Don't record failure for inner checks. Set result if it is a PASS
+                    // @see https://datatracker.ietf.org/doc/html/rfc7208#section-5.2
+                    if ($isInnerCheck && $term->getQualifier() === '+') {
+                        $result->setShortResult($term->getQualifier(), $explanation ?? null);
                     }
 
+                    // Allow setting the result if it's empty, or if it has not already been set to PASS
+                    if (!$isInnerCheck && (!$result->hasResult() || $result->getShortResult() !== '+')) {
+                        $result->setShortResult($term->getQualifier(), $explanation ?? null);
+                    }
                 }
             }
             elseif($term instanceof Redirect) {

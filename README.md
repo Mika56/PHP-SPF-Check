@@ -49,7 +49,10 @@ If you want to get more details about the check, you can use `SPFCheck::getResul
 
 ### Continuing checks after a match or a failure is detected
 
-There are some cases where you may wish to check all the mechanisms in an SPF record, even after a match or a failure is detected; for example to determine if the SPF record has too many `include:` statements (SPF has a hard limit of 10 DNS lookups). To do this, you can provide the `$stopOnMatchOrError` constructor argument for SPFCheck:
+There are some cases where you may wish to check all the mechanisms in an SPF record, 
+even after a match or a failure is detected; for example to determine if the SPF record has too many 
+`include:` statements (SPF has a hard limit of 10 DNS lookups). 
+To do this, you can provide the `$stopOnMatchOrError` constructor argument for SPFCheck:
 
 ```php
 use Mika56\SPFCheck\DNS\DNSRecordGetter;
