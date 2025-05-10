@@ -8,11 +8,11 @@ class Query
 {
     private string $ipAddress;
     private string $domainName;
-    private ?string $helo;
+    private string $helo;
     private ?string $sender;
     private ?string $originalDomainName = null;
 
-    public function __construct(string $ipAddress, string $domainName, ?string $helo = null, ?string $sender = null)
+    public function __construct(string $ipAddress, string $domainName, string $helo = "spfcheck.email", ?string $sender = null)
     {
         if (preg_match('/^(:|0000:0000:0000:0000:0000):FFFF:/i', $ipAddress)) {
             $ipAddress = strrev(explode(':', strrev($ipAddress), 2)[0]);
@@ -34,7 +34,7 @@ class Query
         return $this->domainName;
     }
 
-    public function getHelo(): ?string
+    public function getHelo(): string
     {
         return $this->helo;
     }

@@ -73,7 +73,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
     public function resolveTXT(string $domain): array
     {
-        $records = dns_get_record($domain, DNS_TXT);
+        $records = @dns_get_record($domain, DNS_TXT);
         if (false === $records) {
             throw new DNSLookupException;
         }
