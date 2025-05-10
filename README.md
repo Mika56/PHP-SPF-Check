@@ -10,18 +10,23 @@
 Simple library to check an IP address against a domain's [SPF](http://www.openspf.org/) record
 
 ## Requirements
-This library requires a supported version of PHP, that is PHP 7.4 and >= 8.0.
+This library requires a supported version of PHP, that is PHP >= 8.1.
 
-If you are running an older version of PHP, you might be interested in the version 1 of this library, working with PHP version as old as 5.3.
-Please note that this version does not have all features and will not receive any bugfixes. 
+Older versions of this library support older versions of PHP. Please note that no bugfixes, no new features, and no support will be provided for older versions.
+
+| Library version | Min version of PHP | Highest version of PHP |
+|-----------------|--------------------|------------------------|
+| 1               | 5.6                | 5.6                    |
+| 2               | 7.4                | 8.3                    |
+| 3               | 8.1                | 8.4                    |
 
 ## Installation
 This library is available through Composer.
-Run `composer require "mika56/spfcheck:^2.0"` or add this to your composer.json:
+Run `composer require "mika56/spfcheck:^3.0"` or add this to your composer.json:
 ```json
 {
   "require": {
-    "mika56/spfcheck": "^2.0"
+    "mika56/spfcheck": "^3.0"
   }
 }
 ```
