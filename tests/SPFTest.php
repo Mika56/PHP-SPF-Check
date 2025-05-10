@@ -21,7 +21,7 @@ final class SPFTest extends TestCase
     public function testCases($ipAddress, $domain, DNSRecordGetterInterface $dnsData, $expectedResult, ?string $explanation, ?string $helo = null, ?string $sender = null)
     {
         $spfCheck = new SPFCheck($dnsData);
-        $result = $spfCheck->getResult(new Query($ipAddress, $domain, $helo, $sender));
+        $result = $spfCheck->getResult(new Query($ipAddress, $domain, $helo ?? "spfcheck.email", $sender));
 
         try {
             $spfRecords = $spfCheck->getDomainSPFRecords($domain);
