@@ -1,0 +1,30 @@
+description: Issue 29
+tests:
+  ptr-lookup-error:
+    description: >-
+      A DNS error during the PTR lookup makes the ptr mechanism fail to match
+    helo: mail.example.com
+    host: 1.2.3.4
+    mailfrom: postmaster@example.com
+    result: softfail
+  ptr-name-a-lookup-error:
+    description: >-
+      A DNS error during the A lookup of a PTR name skips that name
+    helo: mail.example.net
+    host: 1.2.3.5
+    mailfrom: postmaster@example.net
+    result: pass
+zonedata:
+  example.com:
+    - SPF: 'v=spf1 ptr ~all'
+  4.3.2.1.in-addr.arpa:
+    - TIMEOUT
+  example.net:
+    - SPF: 'v=spf1 ptr ~all'
+  5.3.2.1.in-addr.arpa:
+    - PTR: broken.example.net
+    - PTR: mail.example.net
+  broken.example.net:
+    - TIMEOUT
+  mail.example.net:
+    - A: 1.2.3.5

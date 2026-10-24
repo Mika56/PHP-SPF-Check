@@ -94,6 +94,9 @@ class DNSRecordGetterOpenSPF implements DNSRecordGetterInterface
             $revIp   = strtolower(implode('.', array_reverse(str_split(str_replace(':', '', $literal))))).'.ip6.arpa';
         }
 
+        if (array_key_exists($revIp, $this->data) && $this->data[$revIp] == 'TIMEOUT') {
+            throw new DNSLookupException();
+        }
         if (array_key_exists($revIp, $this->data) && array_key_exists('PTR', $this->data[$revIp])) {
             return array_slice($this->data[$revIp]['PTR'], 0, 10);
         }

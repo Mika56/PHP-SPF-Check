@@ -15,10 +15,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
      */
     public function resolveA(string $domain, bool $ip4only = false): array
     {
-        $records = dns_get_record($domain, $ip4only ? DNS_A : (DNS_A | DNS_AAAA));
-        if (false === $records) {
-            throw new DNSLookupException;
-        }
+        $records = $this->getRecords($domain, $ip4only ? DNS_A : (DNS_A | DNS_AAAA));
 
         $addresses = [];
 
@@ -38,10 +35,7 @@ class DNSRecordGetter implements DNSRecordGetterInterface
      */
     public function resolveMx(string $domain): array
     {
-        $records = dns_get_record($domain, DNS_MX);
-        if (false === $records) {
-            throw new DNSLookupException;
-        }
+        $records = $this->getRecords($domain, DNS_MX);
 
         $addresses = [];
 
@@ -54,6 +48,9 @@ class DNSRecordGetter implements DNSRecordGetterInterface
         return $addresses;
     }
 
+    /**
+     * @throws DNSLookupException
+     */
     public function resolvePtr(string $ipAddress): array
     {
         if (stripos($ipAddress, '.') !== false) {
@@ -68,15 +65,12 @@ class DNSRecordGetter implements DNSRecordGetterInterface
 
         return array_map(function ($e) {
             return $e['target'];
-        }, dns_get_record($revIp, DNS_PTR));
+        }, $this->getRecords($revIp, DNS_PTR));
     }
 
     public function resolveTXT(string $domain): array
     {
-        $records = @dns_get_record($domain, DNS_TXT);
-        if (false === $records) {
-            throw new DNSLookupException;
-        }
+        $records = $this->getRecords($domain, DNS_TXT);
 
         $texts = [];
 
@@ -87,5 +81,21 @@ class DNSRecordGetter implements DNSRecordGetterInterface
         }
 
         return $texts;
+    }
+
+    /**
+     * dns_get_record() emits a warning on lookup failure in addition to returning false,
+     * which breaks applications that convert warnings to exceptions (see issue #29)
+     *
+     * @throws DNSLookupException
+     */
+    private function getRecords(string $hostname, int $type): array
+    {
+        $records = @dns_get_record($hostname, $type);
+        if (false === $records) {
+            throw new DNSLookupException;
+        }
+
+        return $records;
     }
 }

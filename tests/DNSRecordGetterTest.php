@@ -6,6 +6,7 @@ namespace Mika56\SPFCheck\Test;
 
 
 use Mika56\SPFCheck\DNS\DNSRecordGetter;
+use Mika56\SPFCheck\Exception\DNSLookupException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\DnsMock;
 
@@ -122,6 +123,32 @@ class DNSRecordGetterTest extends TestCase
         $result = $dnsRecordGetter->resolvePtr('fe80::');
         $this->assertCount(1, $result);
         $this->assertContains('example.com', $result);
+    }
+
+    public function lookupFailureProvider(): array
+    {
+        return [
+            'A'   => ['resolveA', 'example.com'],
+            'MX'  => ['resolveMx', 'example.com'],
+            'PTR' => ['resolvePtr', '127.0.0.1'],
+            'TXT' => ['resolveTXT', 'example.com'],
+        ];
+    }
+
+    /**
+     * @dataProvider lookupFailureProvider
+     */
+    public function testLookupFailureThrowsDNSLookupException(string $method, string $argument)
+    {
+        // DnsMock returns false for unknown hosts, like dns_get_record() on a lookup failure
+        DnsMock::withMockedHosts([
+            'other.example.com' => [],
+        ]);
+
+        $dnsRecordGetter = new DNSRecordGetter();
+
+        $this->expectException(DNSLookupException::class);
+        $dnsRecordGetter->$method($argument);
     }
 
 }

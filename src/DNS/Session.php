@@ -66,7 +66,12 @@ final class Session
     {
         $this->countRequest();
 
-        $ptrRecords = $this->DNSRecordGetter->resolvePtr($ipAddress);
+        try {
+            $ptrRecords = $this->DNSRecordGetter->resolvePtr($ipAddress);
+        } catch (DNSLookupException $e) {
+            // "If a DNS error occurs while doing the PTR RR lookup, then this mechanism fails to match"
+            return;
+        }
         foreach ($ptrRecords as $i => $ptrRecord) {
             if($i > 9) {
                 // "if more than 10 sending-domain_names are found, use at most 10"
@@ -74,7 +79,12 @@ final class Session
             }
             $this->countPTRRequest();
             $ptrRecord = strtolower($ptrRecord);
-            $ipAddresses = $this->DNSRecordGetter->resolveA($ptrRecord);
+            try {
+                $ipAddresses = $this->DNSRecordGetter->resolveA($ptrRecord);
+            } catch (DNSLookupException $e) {
+                // "If a DNS error occurs while doing an A RR lookup, then that domain name is skipped"
+                continue;
+            }
             if (in_array($ipAddress, $ipAddresses)) {
                 yield $ptrRecord;
             }
